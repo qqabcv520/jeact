@@ -1,0 +1,261 @@
+.ps-selector {
+  display: inline-block;
+}
+
+.ps-label {
+  display: inline-flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+input[type=checkbox].ps-checkbox {
+  margin: 4px;
+  position: relative;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+input[type=checkbox].ps-checkbox::before {
+  content: '';
+  line-height: 14px;
+  font-size: 10px;
+  color: #fff;
+  background-color: #fff;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1px #ccc solid;
+  border-radius: 2px;
+  vertical-align: top;
+}
+input[type=checkbox].ps-checkbox:checked::before {
+  background-color: #2599ab;
+  border-color: transparent;
+}
+input[type=checkbox].ps-checkbox::after {
+  content: '';
+}
+input[type=checkbox].ps-checkbox:checked::after {
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  width: 8px;
+  height: 5px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotateZ(-45deg);
+}
+.ps-close {
+  font-family: "黑体", serif;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+}
+.ps-close:hover {
+  color: #888;
+}
+.ps-close:active {
+  color: #333;
+}
+
+
+
+
+.ps-selector {
+  width: 150px;
+  position: relative;
+}
+
+.ps-selector ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px
+}
+
+.ps-selector ::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
+
+.ps-selector ::-webkit-scrollbar-thumb {
+  background: #e1e1e1;
+  border: none;
+  border-radius: 0;
+}
+
+.ps-selector ::-webkit-scrollbar-thumb:hover {
+  background: #cccccc
+}
+
+.ps-selector ::-webkit-scrollbar-thumb:active {
+  background: #999999;
+}
+
+.ps-selector ::-webkit-scrollbar-track {
+  border: 0 none #ffffff;
+  border-radius: 0;
+}
+
+.ps-selector ::-webkit-scrollbar-track:hover {
+  background: #eee
+}
+
+.ps-selector ::-webkit-scrollbar-corner {
+  background: transparent
+}
+
+.ps-input.form-control {
+  background-color: #fff;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.ps-popup {
+  font-size: 12px;
+  top: 30px;
+  left: 0;
+  position: absolute;
+  border: 1px #ddd solid;
+  width: 724px;
+  z-index: 1000;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+}
+
+.ps-search-bar {
+  background-color: #fff;
+  padding: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ps-search-input {
+  width: 300px;
+  margin-right: 8px;
+  position: relative;
+}
+.ps-search-input > input.form-control {
+  width: 100%;
+}
+
+.ps-commonly-used {
+  background-color: #eee;
+  padding: 4px 0;
+}
+
+.ps-commonly-used-options {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 60px;
+}
+.ps-commonly-used-option {
+  margin-top: 0;
+  font-weight: normal;
+  width: 20%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+
+.ps-options {
+  display: flex;
+  height: 250px;
+  width: 100%;
+  overflow: auto;
+  background-color: #fff;
+}
+
+.ps-column {
+  border-right: 1px #eee solid;
+  flex-shrink: 0;
+  width: 120px;
+  overflow: auto;
+}
+
+.ps-option {
+  margin: 1px 0;
+  padding: 4px 0;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ps-option:hover {
+  background-color: #eee;
+}
+.ps-option-selected {
+  background-color: #eee;
+}
+.ps-option.ps-option-next {
+  padding-right: 20px;
+}
+.ps-option.ps-option-next::after {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  content: "";
+  width: 14px;
+  height: 10px;
+  border: 5px transparent solid;
+  border-left: 7px #999 solid;
+}
+.ps-option-text {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ps-selected-cnt {
+  padding: 6px 6px 0;
+  background-color: #fff;
+}
+.ps-selected-label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.ps-selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 4px;
+  max-height: 300px;
+  overflow: auto;
+  background-color: #fff;
+}
+
+.ps-selected-tag {
+  font-size: 13px;
+  padding: 3px;
+  width: auto;
+  border: 1px #ccc solid;
+  margin: 4px;
+  background-color: #eee;
+  color: #555;
+  border-radius: 2px;
+}
+
+.ps-search-popup {
+  position: absolute;
+  background-color: #fff;
+  top: 30px;
+  width: 100%;
+  max-height: 380px;
+  overflow: auto;
+  border: 1px #eee solid;
+  padding: 4px;
+  z-index: 200;
+}
+
+.ps-search-options {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 60px;
+}
+.ps-search-option {
+  font-size: 12px;
+  margin-top: 0;
+  font-weight: normal;
+  width: 33.333333%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "sourceMap": true, //代码映射
+        "noImplicitAny": false, //强类型检查
+        "noImplicitThis": true, // 禁止this为any类型
+        "module": "es2015", //组织代码方式
+        "target": "esnext", //编译目标平台
+        "allowJs": true, //允许使用js
+        "allowSyntheticDefaultImports": true, //允许从没有设置默认导出的模块中默认导入。这并不影响代码的显示，仅为了类型检查。
+        "moduleResolution": "node",
+        "types": ["node"],
+        "jsx": "react",
+        "jsxFactory": "createVNode",
+        "lib": [
+            "es2015",
+            "es2016.array.include",
+            "esnext.array",
+            "dom"
+        ]
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}
