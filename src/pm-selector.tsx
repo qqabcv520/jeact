@@ -54,11 +54,11 @@ export class PMSelectorComponent extends Component {
     let checkedOptions = [];
     let options = this.options;  // 待搜索列表
     while (options.length > 0) {
-      // 新增dependencies放进待搜索列表
+      // 新增放进待搜索列表
       const currChecked = options.filter(value => (!value.children || !value.children.length) && value.checked);
       checkedOptions = checkedOptions.concat(currChecked);
       options = options.filter(value => value.children && value.children.length)
-        .flatMap(value => value.children) // 搜索待搜索dependencies列表
+        .flatMap(value => value.children) // 搜索待搜索列表
     }
     return checkedOptions;
   }
