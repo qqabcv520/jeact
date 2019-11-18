@@ -142,11 +142,13 @@ export class PMSelectorComponent extends Component {
 
   clear = () => {
     this.searchText = '';
+    this.commonCheckedAll = false;
     this.checkedOptions.forEach(value => {
       value.checked = false;
       this.checkAll(value.parent);
     });
     this.update();
+    this.valueChange([]);
   };
 
   searchChange = (e: Event) => {
