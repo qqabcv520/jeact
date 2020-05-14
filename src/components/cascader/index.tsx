@@ -2,7 +2,7 @@ import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountInput } from '../../utils';
 import $ from 'jquery';
-import './index.css'
+import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
 
 export interface CascaderOption {
