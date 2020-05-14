@@ -51,7 +51,6 @@ export function mountInput(
         pre[curr] = $selected.attr(curr);
         return pre;
       }, {})
-      const val = $selected.val();
       $selected[name]({...props});
     })
   });
