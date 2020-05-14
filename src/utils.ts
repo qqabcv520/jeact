@@ -39,7 +39,7 @@ export function mountInput(
           this.val(value == null ? '' : String(value));
         }
       });
-      this.after(component.refs.selector);
+      this.after(component['vNode'].el);
       this.hide();
       this.data(name, component);
     } else {
