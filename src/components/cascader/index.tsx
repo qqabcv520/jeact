@@ -1,4 +1,4 @@
-import { Component } from '../../mvvm';
+import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountInput } from '../../utils';
 import $ from 'jquery';
@@ -22,15 +22,18 @@ export interface CascaderComponentProps {
   valueChange?: (options: CascaderOption[]) => void;
 }
 
-export class CascaderComponent extends Component {
+export class CascaderComponent extends ValueComponent<any[]> {
+
 
   placeholder: string;
   valueField: string;
   labelField: string;
   childrenField: string;
-  value: any[];
   valueChange: (options: any[]) => void;
-
+  private _value: any[];
+  set value(value: any[]) {
+    this._value = value;
+  }
   private _options: any[] = [];
   get options(): any[] {
     return this._options;
@@ -38,7 +41,7 @@ export class CascaderComponent extends Component {
   set options(value: any[]) {
     this._options = value;
     if (value != null) {
-      this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
+      this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this._value);
       this.leafOptions = this.leafChildren(this.convertedOptions);
       this.loadCommonOption();
     }
@@ -97,7 +100,7 @@ export class CascaderComponent extends Component {
     this.valueField = args.valueField || 'value';
     this.labelField = args.labelField || 'label';
     this.childrenField = args.childrenField || 'children';
-    this.value = args.value || [];
+    this._value = args.value || [];
     this.valueChange = args.valueChange || ((value: any[]) => {});
     this.options = args.options;
   }

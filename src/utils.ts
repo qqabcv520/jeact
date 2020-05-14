@@ -9,12 +9,13 @@ export function isEmpty(value: any) {
 
 // 挂载为jquery插件
 export function mountInput(
-  {name, componentType, props, $ = window['JQuery']}: {name: string, componentType: Type<Component>, props: string[], $?: any}
+  {name, componentType, props, $ = window['JQuery']}: {name: string, componentType: Type<Component>, props: string[], $?: JQueryStatic}
 ) {
   if ($ == null) {
     return;
   }
   $.fn[name] = function (...args: any[]) {
+
     if (typeof args[0] === 'string') {
       const [propName, ...methodArgs] = args;
       const component = this.data(name);
@@ -37,10 +38,8 @@ export function mountInput(
         ...methodArgs,
         valueChange: (value: any[]) => {
           this.val(value == null ? '' : String(value));
-        }
-      });
-      this.after(component['vNode'].el);
-      this.hide();
+        },
+      }, this[0]);
       this.data(name, component);
     } else {
       $.error('第一个参数只能是string或object');
@@ -56,8 +55,8 @@ export function mountInput(
         return pre;
       }, {})
       const val = $selected.val();
-      const value = val ? val.split(',') : [];
-      $selected.pmSelector({...props, value});
+      const value = val ? String(val).split(',') : [];
+      $selected[name]({...props, value});
     })
   });
 

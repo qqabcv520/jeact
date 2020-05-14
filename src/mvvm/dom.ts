@@ -111,6 +111,7 @@ export class DomOperate {
     el.removeAttribute(attrName);
   }
 
+  // 移除el的所有子节点
   removeChildren(el: Node) {
     const children = el.childNodes;
     for (let i = children.length-1; i >= 0; i--) {

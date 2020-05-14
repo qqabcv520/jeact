@@ -11,8 +11,8 @@ export interface Type<T> extends Function {
 export class Component {
   private vNode: VElement;
   private updateFlag = false;
-  private readonly dom = new DomOperate(this);
-  private readonly diff = new Differentiator(this.dom);
+  protected readonly dom = new DomOperate(this);
+  protected readonly diff = new Differentiator(this.dom);
   readonly el: HTMLElement;
   readonly refs: {
     [key: string]: Element | Component;
@@ -25,7 +25,23 @@ export class Component {
   private mount() {
     this.vNode = this.render();
     const node = this.dom.createElement(this.vNode);
+    this.appendToEl(node);
+  }
+
+  appendToEl(node: HTMLElement) {
     this.el && node && this.dom.appendChild(this.el, node);
+  }
+
+  reappendToEl(oldNode: HTMLElement, newNode: HTMLElement) {
+    if (oldNode == newNode || this.el == null) {
+      return;
+    }
+    const parentNode = this.dom.parentNode(oldNode);
+    if (parentNode == null) {
+      return;
+    }
+    this.dom.removeChild(parentNode, oldNode);
+    this.appendToEl(newNode);
   }
 
   update() {
@@ -40,6 +56,7 @@ export class Component {
       this.updateFlag = false;
       const newVNode = this.render();
       this.diff.patch(this.vNode, newVNode);
+      this.reappendToEl(this.vNode.el, newVNode.el);
       this.vNode = newVNode;
     })
   }
@@ -62,5 +79,28 @@ export class Component {
   }
 }
 
+
+
+export abstract class ValueComponent<T> extends Component {
+
+  abstract set value(value: T);
+  abstract valueChange(value: T);
+
+  readonly el: HTMLInputElement;
+
+  mounted() {
+    super.mounted();
+
+  }
+
+  appendToEl(node: HTMLElement) {
+    const parentNode = this.el && this.dom.parentNode(this.el);
+    if (parentNode != null) {
+      node && this.dom.insertBefore(parentNode, node, this.el);
+      this.el.hidden = true;
+    }
+  }
+
+}
 
 
