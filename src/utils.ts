@@ -36,9 +36,6 @@ export function mountInput(
       const methodArgs = args[0];
       const component = Component.create(componentType, {
         ...methodArgs,
-        valueChange: (value: any[]) => {
-          this.val(value == null ? '' : String(value));
-        },
       }, this[0]);
       this.data(name, component);
     } else {
@@ -55,8 +52,7 @@ export function mountInput(
         return pre;
       }, {})
       const val = $selected.val();
-      const value = val ? String(val).split(',') : [];
-      $selected[name]({...props, value});
+      $selected[name]({...props});
     })
   });
 

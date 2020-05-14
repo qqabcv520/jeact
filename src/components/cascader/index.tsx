@@ -3,6 +3,7 @@ import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountInput } from '../../utils';
 import $ from 'jquery';
 import './index.css'
+import { ValueComponentProps } from '../../mvvm/component';
 
 export interface CascaderOption {
   value: any;
@@ -12,28 +13,22 @@ export interface CascaderOption {
   children?: CascaderOption[];
 }
 
-export interface CascaderComponentProps {
+export interface CascaderComponentProps extends ValueComponentProps<any[]> {
   placeholder?: string;
   options?: any[];
   valueField?: string;
   labelField?: string;
   childrenField?: string;
   value?: any[];
-  valueChange?: (options: CascaderOption[]) => void;
 }
 
 export class CascaderComponent extends ValueComponent<any[]> {
-
 
   placeholder: string;
   valueField: string;
   labelField: string;
   childrenField: string;
-  valueChange: (options: any[]) => void;
-  private _value: any[];
-  set value(value: any[]) {
-    this._value = value;
-  }
+  value: any[];
   private _options: any[] = [];
   get options(): any[] {
     return this._options;
@@ -41,7 +36,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   set options(value: any[]) {
     this._options = value;
     if (value != null) {
-      this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this._value);
+      this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
       this.leafOptions = this.leafChildren(this.convertedOptions);
       this.loadCommonOption();
     }
@@ -100,9 +95,12 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.valueField = args.valueField || 'value';
     this.labelField = args.labelField || 'label';
     this.childrenField = args.childrenField || 'children';
-    this._value = args.value || [];
-    this.valueChange = args.valueChange || ((value: any[]) => {});
+    this.value = args.value || [];
     this.options = args.options;
+  }
+
+  writeValue(value: string) {
+    this.value = value ? value.split(',') : [];
   }
 
   // 组件声明周期hook，当组件创建后调用，此时尚未挂载DOM
@@ -147,7 +145,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.checkAll(option.parent);
     this.checkCommonOption();
     this.checkSearchOption();
-    this.valueChange(this.checkedOptions.map(value1 => value1.value));
+    this.onChange(this.checkedOptions.map(value1 => value1.value));
     this.update();
   }
 
@@ -181,7 +179,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
       this.checkAll(value.parent);
     });
     this.update();
-    this.valueChange([]);
+    this.onChange([]);
   };
 
   searchChange = (e: Event) => {

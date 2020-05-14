@@ -2,11 +2,17 @@ import { VElement } from './v-node';
 import { DomOperate } from './dom';
 import { Differentiator } from './diff';
 
-
 export interface Type<T> extends Function {
   new (...args: any[]): T;
 }
 
+export interface ComponentProps {
+  el: HTMLElement;
+}
+
+export interface ValueComponentProps<T> extends ComponentProps {
+  valueChange: (options: T) => void;
+}
 
 export class Component {
   private vNode: VElement;
@@ -18,7 +24,7 @@ export class Component {
     [key: string]: Element | Component;
   } = {};
 
-  protected constructor(args: any) {
+  protected constructor(args: ComponentProps) {
     this.el = args.el;
   }
 
@@ -83,14 +89,30 @@ export class Component {
 
 export abstract class ValueComponent<T> extends Component {
 
-  abstract set value(value: T);
-  abstract valueChange(value: T);
-
+  abstract writeValue(value: string);
   readonly el: HTMLInputElement;
+  protected valueChange: (options: T) => void;
+
+  protected constructor(args: ValueComponentProps<T>) {
+    super(args);
+    this.valueChange = args.valueChange;
+  }
 
   mounted() {
     super.mounted();
+    debugger
+    this.writeValue(this.el.value);
+  }
 
+  readValue(value): string {
+    return value ? String(value) : '';
+  }
+
+  onChange(value: T) {
+    this.el.value = this.readValue(value);
+    if (this.valueChange) {
+      this.valueChange(value);
+    }
   }
 
   appendToEl(node: HTMLElement) {

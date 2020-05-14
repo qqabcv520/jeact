@@ -1,8 +1,9 @@
-import { Component } from '../../mvvm';
+import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountInput } from '../../utils';
 import $ from 'jquery';
 import './index.css'
+import { ValueComponentProps } from '../../mvvm/component';
 
 export interface CascaderOption {
   value: any;
@@ -12,25 +13,22 @@ export interface CascaderOption {
   children?: CascaderOption[];
 }
 
-export interface CascaderComponentProps {
+export interface CascaderComponentProps extends ValueComponentProps<any[]> {
   placeholder?: string;
   options?: any[];
   valueField?: string;
   labelField?: string;
   childrenField?: string;
   value?: any[];
-  valueChange?: (options: CascaderOption[]) => void;
 }
 
-export class CascaderComponent extends Component {
+export class CascaderComponent extends ValueComponent<any[]> {
 
   placeholder: string;
   valueField: string;
   labelField: string;
   childrenField: string;
   value: any[];
-  valueChange: (options: any[]) => void;
-
   private _options: any[] = [];
   get options(): any[] {
     return this._options;
@@ -72,9 +70,7 @@ export class CascaderComponent extends Component {
     return result;
   };
 
-  /**
-   * 获取被勾选的叶子节点
-   */
+  // 获取被勾选的所有叶子节点
   get checkedOptions(): CascaderOption[] {
     let checkedOptions = [];
     let options = this.convertedOptions;  // 待搜索列表
@@ -88,6 +84,7 @@ export class CascaderComponent extends Component {
     return checkedOptions;
   }
 
+  // 用于界面展示
   get checkedOptionStr(): string {
     return this.checkedOptions.map(value => value.label).join(',');
   }
@@ -99,8 +96,11 @@ export class CascaderComponent extends Component {
     this.labelField = args.labelField || 'label';
     this.childrenField = args.childrenField || 'children';
     this.value = args.value || [];
-    this.valueChange = args.valueChange || ((value: any[]) => {});
     this.options = args.options;
+  }
+
+  writeValue(value: string) {
+    this.value = value ? value.split(',') : [];
   }
 
   // 组件声明周期hook，当组件创建后调用，此时尚未挂载DOM
@@ -138,13 +138,14 @@ export class CascaderComponent extends Component {
     this.update()
   };
 
+  // 勾选
   checkOption(option: CascaderOption, checked: boolean) {
     option.checked = checked;
     this.checkChildren(option, checked);
     this.checkAll(option.parent);
     this.checkCommonOption();
     this.checkSearchOption();
-    this.valueChange(this.checkedOptions.map(value1 => value1.value));
+    this.onChange(this.checkedOptions.map(value1 => value1.value));
     this.update();
   }
 
@@ -178,7 +179,7 @@ export class CascaderComponent extends Component {
       this.checkAll(value.parent);
     });
     this.update();
-    this.valueChange([]);
+    this.onChange([]);
   };
 
   searchChange = (e: Event) => {
@@ -208,6 +209,7 @@ export class CascaderComponent extends Component {
     this.update();
   };
 
+  // 格式化外部option为内部option
   convert(
     options: any[],
     valueField,
