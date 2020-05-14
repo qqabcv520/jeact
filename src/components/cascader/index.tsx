@@ -101,6 +101,10 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
   writeValue(value: string) {
     this.value = value ? value.split(',') : [];
+    if (this.convertedOptions != null) {
+      this.leafOptions.forEach(value1 => value1.checked = this.value.includes(value1.value))
+      this.update();
+    }
   }
 
   // 组件声明周期hook，当组件创建后调用，此时尚未挂载DOM
@@ -394,3 +398,9 @@ mountInput({
   $: $,
 })
 
+mountInput({
+  name: 'pmSelector',
+  componentType: CascaderComponent,
+  props: ['valueField', 'labelField', 'childrenField', 'placeholder'],
+  $: $,
+})

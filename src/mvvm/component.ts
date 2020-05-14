@@ -28,7 +28,7 @@ export class Component {
     this.el = args.el;
   }
 
-  private mount() {
+  protected mount() {
     this.vNode = this.render();
     const node = this.dom.createElement(this.vNode);
     this.appendToEl(node);
@@ -98,9 +98,8 @@ export abstract class ValueComponent<T> extends Component {
     this.valueChange = args.valueChange;
   }
 
-  mounted() {
-    super.mounted();
-    debugger
+  mount() {
+    super.mount();
     this.writeValue(this.el.value);
   }
 

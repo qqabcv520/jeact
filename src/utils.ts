@@ -1,11 +1,19 @@
 import { Component, Type } from './mvvm';
 
-
+// 判空
 export function isEmpty(value: any) {
   return value == null || value.length === 0;
 }
 
-
+// 驼峰/下划线 转 短横线命名(kebab-case)
+export function getKebabCase(str: string): string {
+  const reg = /^([A-Z$]+)/g;
+  const reg2 = /_([a-zA-Z$]+)/g;
+  const reg3 = /([A-Z$]+)/g;
+  return str.replace(reg, ($, $1) => $1.toLowerCase())
+    .replace(reg2, ($, $1) => '-' + $1.toLowerCase())
+    .replace(reg3, ($, $1) => '-' + $1.toLowerCase());
+}
 
 // 挂载为jquery插件
 export function mountInput(
@@ -45,13 +53,13 @@ export function mountInput(
   };
 
   $(function () {
-    $(name).each(function (this) {
+    $(`[${getKebabCase(name)}]`).each(function (this) {
       const $selected = $(this);
-      props.reduce((pre, curr) => {
+      const propsValue = props.reduce((pre, curr) => {
         pre[curr] = $selected.attr(curr);
         return pre;
       }, {})
-      $selected[name]({...props});
+      $selected[name](propsValue);
     })
   });
 
