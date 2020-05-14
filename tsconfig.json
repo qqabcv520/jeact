@@ -7,6 +7,12 @@
         "target": "esnext", //编译目标平台
         "allowJs": true, //允许使用js
         "allowSyntheticDefaultImports": true, //允许从没有设置默认导出的模块中默认导入。这并不影响代码的显示，仅为了类型检查。
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noUnusedLocals": true,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
         "moduleResolution": "node",
         "types": ["node"],
         "jsx": "react",

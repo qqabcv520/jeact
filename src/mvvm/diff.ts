@@ -72,6 +72,7 @@ export class Differentiator {
         return i;
       }
     }
+    return null;
   }
 
   updateChildren(parentEl: Node, oldChildren: VNode[], newChildren: VNode[]) {

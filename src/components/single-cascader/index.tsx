@@ -1,42 +1,64 @@
-import { Component } from './mvvm';
-import { createVNode, VNode } from './mvvm/v-node';
+import { Component } from '../../mvvm';
+import { createVNode, VNode } from '../../mvvm/v-node';
+import { mountInput } from '../../utils';
+import $ from 'jquery';
+import './index.css'
 
-
-export interface PMSelectorOption {
+export interface CascaderOption {
   value: any;
   label: string;
   checked?: boolean;
-  parent?: PMSelectorOption;
-  children?: PMSelectorOption[];
+  parent?: CascaderOption;
+  children?: CascaderOption[];
 }
 
-export class PMSelectorComponent extends Component {
-  readonly saveCommonMax = 10;
-  placeholder = '';
-  open = false;
-  commonOptions: PMSelectorOption[] = [];
-  commonCheckedAll = false;
-  selectedIndexes: number[] = [];
-  leafOptions: PMSelectorOption[] = [];
-  searchText = '';
-  searchOptions: PMSelectorOption[] = [];
-  searchCheckedAll = false;
-  showSearch = true;
-  valueChange = (options) => {};
-  private _options: PMSelectorOption[] = [];
-  get options(): PMSelectorOption[] {
+export interface CascaderComponentProps {
+  placeholder?: string;
+  options?: any[];
+  valueField?: string;
+  labelField?: string;
+  childrenField?: string;
+  value?: any[];
+  valueChange?: (options: CascaderOption[]) => void;
+}
+
+export class CascaderComponent extends Component {
+
+  placeholder: string;
+  valueField: string;
+  labelField: string;
+  childrenField: string;
+  value: any[];
+  valueChange: (options: any[]) => void;
+
+  private _options: any[] = [];
+  get options(): any[] {
     return this._options;
   }
-  set options(value: PMSelectorOption[]) {
+  set options(value: any[]) {
     this._options = value;
-    this.options.forEach(value => this.addParent(value));
-    this.leafOptions = this.leafChildren(this.options);
-    this.loadCommonOption();
+    if (value != null) {
+      this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
+      this.leafOptions = this.leafChildren(this.convertedOptions);
+      this.loadCommonOption();
+    }
     this.update();
   }
 
-  get columns(): PMSelectorOption[][] {
-    let list = this.options;
+  convertedOptions: CascaderOption[] = [];
+  readonly saveCommonMax = 10;
+  open = false;
+  commonOptions: CascaderOption[] = [];
+  commonCheckedAll = false;
+  selectedIndexes: number[] = [];
+  leafOptions: CascaderOption[] = [];
+  searchText = '';
+  searchOptions: CascaderOption[] = [];
+  searchCheckedAll = false;
+  showSearch = true;
+
+  get columns(): CascaderOption[][] {
+    let list = this.convertedOptions;
     let result = [list];
     for (let i = 0; this.selectedIndexes[i] != null; i++) {
       const selectedIndex = this.selectedIndexes[i];
@@ -50,9 +72,12 @@ export class PMSelectorComponent extends Component {
     return result;
   };
 
-  get checkedOptions(): PMSelectorOption[] {
+  /**
+   * 获取被勾选的叶子节点
+   */
+  get checkedOptions(): CascaderOption[] {
     let checkedOptions = [];
-    let options = this.options;  // 待搜索列表
+    let options = this.convertedOptions;  // 待搜索列表
     while (options.length > 0) {
       // 新增放进待搜索列表
       const currChecked = options.filter(value => (!value.children || !value.children.length) && value.checked);
@@ -67,13 +92,19 @@ export class PMSelectorComponent extends Component {
     return this.checkedOptions.map(value => value.label).join(',');
   }
 
-  constructor(args: any) {
+  constructor(args: CascaderComponentProps) {
     super(args);
-    Object.assign(this, args);
+    this.placeholder = args.placeholder;
+    this.valueField = args.valueField || 'value';
+    this.labelField = args.labelField || 'label';
+    this.childrenField = args.childrenField || 'children';
+    this.value = args.value || [];
+    this.valueChange = args.valueChange || ((value: any[]) => {});
+    this.options = args.options;
   }
 
   // 组件声明周期hook，当组件创建后调用，此时尚未挂载DOM
-  init() {
+  beforeMount() {
 
   }
 
@@ -107,14 +138,13 @@ export class PMSelectorComponent extends Component {
     this.update()
   };
 
-
-  checkOption(option: PMSelectorOption, checked: boolean) {
+  checkOption(option: CascaderOption, checked: boolean) {
     option.checked = checked;
     this.checkChildren(option, checked);
     this.checkAll(option.parent);
     this.checkCommonOption();
     this.checkSearchOption();
-    this.valueChange(this.checkedOptions);
+    this.valueChange(this.checkedOptions.map(value1 => value1.value));
     this.update();
   }
 
@@ -127,14 +157,14 @@ export class PMSelectorComponent extends Component {
 
 
   // 添加parent字段
-  addParent(option: PMSelectorOption) {
+  addParent(option: CascaderOption) {
     option.children.forEach(value => {
       value.parent = option;
       this.addParent(value);
     })
   }
 
-  leafChildren(options: PMSelectorOption[]): PMSelectorOption[] {
+  leafChildren(options: CascaderOption[]): CascaderOption[] {
     const childrenLeaf = options.flatMap(value => this.leafChildren(value.children));
     const leaf = options.filter(value => !value.children || !value.children.length);
     return [...childrenLeaf, ...leaf];
@@ -178,15 +208,33 @@ export class PMSelectorComponent extends Component {
     this.update();
   };
 
+  convert(
+    options: any[],
+    valueField,
+    labelField,
+    childrenField,
+    parent: CascaderOption,
+    values?: any[],
+  ): CascaderOption[] {
+    return options.map(option => {
+      return {
+        value: option[valueField],
+        label: option[labelField],
+        checked: (values || []).includes(String(option[valueField])),
+        children: this.convert(option[childrenField] || [], valueField, labelField, childrenField, option, values),
+        parent,
+      }
+    })
+  }
 
-  optionChange(e: Event, option: PMSelectorOption) {
+  optionChange(e: Event, option: CascaderOption) {
     const checked = e.target['checked'];
     this.checkOption(option, checked);
     this.update();
   }
 
   // 判断父节点是否需要勾选(当子节点全选时)
-  checkAll(option: PMSelectorOption) {
+  checkAll(option: CascaderOption) {
     if (!option) {
       return;
     }
@@ -198,7 +246,7 @@ export class PMSelectorComponent extends Component {
   }
 
   // 设置option的check状态，并递归更新子节点，然后saveCommonOption
-  checkChildren(option: PMSelectorOption, check: boolean) {
+  checkChildren(option: CascaderOption, check: boolean) {
     option.checked = check;
     if (option.children && option.children.length > 0) {
       option.children.forEach(value => {
@@ -216,7 +264,7 @@ export class PMSelectorComponent extends Component {
   }
 
   // 保存常用选择到localStorage中
-  saveCommonOption(option: PMSelectorOption) {
+  saveCommonOption(option: CascaderOption) {
     if (this.commonOptions.includes(option)) {
       return;
     }
@@ -335,5 +383,12 @@ export class PMSelectorComponent extends Component {
 }
 
 
+// 挂载为jquery插件
 
+mountInput({
+  name: 'cascader',
+  componentType: CascaderComponent,
+  props: ['valueField', 'labelField', 'childrenField', 'placeholder'],
+  $: $,
+})
 

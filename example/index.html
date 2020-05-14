@@ -8,10 +8,31 @@
 </head>
 <body style="background-color: #f1f1f1">
 
-<input name="xxx" pm-selector ps-url="https://sales.banggood.cn/base/productManager/tree?roleId=3" ps-placeholder="产品经理"
-       ps-label-field="userName" ps-value-field="userId" ps-children-field="subordinateUserList" value="">
+<input id="category" name="xxx"  value="">
 </body>
 
 <script src="../node_modules/jquery/dist/jquery.js"></script>
 <script src="../dist/bundle.js"></script>
+<script>
+  $.ajax('http://172.16.5.14:8080//saleslister/category/get_limit_tree_list', {
+    success: function(res) {
+      if (res && res.success) {
+        $('#category').cascader({
+          placeholder: '类目',
+          valueField: 'categoryIdStr',
+          labelField: 'categoryName',
+          childrenField: 'subCategoriesList',
+          options: res.result
+        })
+      }
+    },
+    type: 'POST',
+    contentType: "application/json",
+    data: JSON.stringify({ shopId: 8835 }),
+    headers: { platformNo: 27 }
+  });
+
+
+
+</script>
 </html>

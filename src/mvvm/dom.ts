@@ -1,5 +1,5 @@
 import { isVElement, isVText, VElement, VNode, VText } from './v-node';
-import { Component } from './index';
+import { Component } from './component';
 
 export class DomOperate {
 
