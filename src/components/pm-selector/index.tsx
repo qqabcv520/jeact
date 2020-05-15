@@ -20,6 +20,7 @@ export interface PmSelectorComponentProps extends ValueComponentProps<any[]> {
   psValueField?: string;
   psLabelField?: string;
   psChildrenField?: string;
+  psCacheName?: string;
   value?: any[];
   psUrl: string;
 }
@@ -30,6 +31,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
   valueField: string;
   labelField: string;
   childrenField: string;
+  cacheName: string;
   value: any[];
   private _options: any[] = [];
   get options(): any[] {
@@ -110,6 +112,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     this.valueField = args.psValueField || 'value';
     this.labelField = args.psLabelField || 'label';
     this.childrenField = args.psChildrenField || 'children';
+    this.cacheName = args.psCacheName || 'commonOptions';
     this.value = args.value || [];
     if (args.psOptions) {
       this.options = args.psOptions;
@@ -276,6 +279,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
 
   // 展开下一级菜单
   nextLevel(level: number, index: number) {
+    this.selectedIndexes = this.selectedIndexes.slice(0, level);
     this.selectedIndexes[level] = index;
     this.update();
   }
@@ -404,6 +408,6 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
 mountInput({
   name: 'pmSelector',
   componentType: PmSelectorComponent,
-  props: ['psValueField', 'psLabelField', 'psChildrenField', 'psPlaceholder', 'psUrl'],
+  props: ['psValueField', 'psLabelField', 'psChildrenField', 'psPlaceholder', 'psUrl', 'psCacheName'],
   $: $,
 })

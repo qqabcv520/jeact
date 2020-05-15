@@ -19,6 +19,7 @@ export interface CascaderComponentProps extends ValueComponentProps<any[]> {
   valueField?: string;
   labelField?: string;
   childrenField?: string;
+  cacheName?: string;
   value?: any[];
 }
 
@@ -28,6 +29,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   valueField: string;
   labelField: string;
   childrenField: string;
+  cacheName: string;
   value: any[];
   private _options: any[] = [];
   get options(): any[] {
@@ -95,6 +97,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.valueField = args.valueField || 'value';
     this.labelField = args.labelField || 'label';
     this.childrenField = args.childrenField || 'children';
+    this.cacheName = args.cacheName;
     this.value = args.value || [];
     this.options = args.options;
   }
@@ -262,7 +265,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
   // 保存常用选择到localStorage中
   saveCommonOption(option: CascaderOption) {
-    if (this.commonOptions.includes(option)) {
+    if (this.commonOptions.includes(option) || this.cacheName == null) {
       return;
     }
     this.commonOptions.unshift(option);
@@ -270,15 +273,14 @@ export class CascaderComponent extends ValueComponent<any[]> {
       this.commonOptions = this.commonOptions.slice(0, this.saveCommonMax);
     }
     const commonOptions = this.commonOptions.map(value => value.value);
-    localStorage.setItem('commonOptions', JSON.stringify(commonOptions));
+    localStorage.setItem(this.cacheName, JSON.stringify(commonOptions));
   }
 
   // 加载localStorage中的常用选择
   loadCommonOption() {
-    const commonOptions: string[] = JSON.parse(localStorage.getItem('commonOptions')) || [];
+    const commonOptions: string[] = JSON.parse(localStorage.getItem(this.cacheName)) || [];
     this.commonOptions = commonOptions.map(value => this.leafOptions.find(value1 => value1.value === value)).filter(value => value);
   }
-
 
   // 更新常用选择全选状态
   checkCommonOption() {
@@ -384,6 +386,6 @@ export class CascaderComponent extends ValueComponent<any[]> {
 mountInput({
   name: 'cascader',
   componentType: CascaderComponent,
-  props: ['valueField', 'labelField', 'childrenField', 'placeholder'],
+  props: ['valueField', 'labelField', 'childrenField', 'placeholder', 'cacheName'],
   $: $,
 })
