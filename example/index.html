@@ -8,7 +8,8 @@
 </head>
 <body style="background-color: #f1f1f1">
 
-<input id="category" name="xxx"  value="">
+<input id="category1" name="xxx"  value="">
+<input id="category2" name="xxx"  value="">
 </body>
 
 <script src="../node_modules/jquery/dist/jquery.js"></script>
@@ -17,8 +18,15 @@
   $.ajax('http://172.16.5.14:8080//saleslister/category/get_limit_tree_list', {
     success: function(res) {
       if (res && res.success) {
-        $('#category').cascader({
-          placeholder: '类目',
+        $('#category1').cascader({
+          placeholder: '类目1',
+          valueField: 'categoryIdStr',
+          labelField: 'categoryName',
+          childrenField: 'subCategoriesList',
+          options: res.result
+        })
+        $('#category2').singleCascader({
+          placeholder: '类目2',
           valueField: 'categoryIdStr',
           labelField: 'categoryName',
           childrenField: 'subCategoriesList',

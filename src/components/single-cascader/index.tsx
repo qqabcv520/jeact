@@ -5,30 +5,30 @@ import $ from 'jquery';
 import './index.css'
 import { ValueComponentProps } from '../../mvvm/component';
 
-export interface CascaderOption {
+export interface SingleCascaderOption {
   value: any;
   label: string;
-  checked?: boolean;
-  parent?: CascaderOption;
-  children?: CascaderOption[];
+  selected?: boolean;
+  parent?: SingleCascaderOption;
+  children?: SingleCascaderOption[];
 }
 
-export interface CascaderComponentProps extends ValueComponentProps<any[]> {
+export interface SingleCascaderComponentProps extends ValueComponentProps<any[]> {
   placeholder?: string;
   options?: any[];
   valueField?: string;
   labelField?: string;
   childrenField?: string;
-  value?: any[];
+  value?: any;
 }
 
-export class CascaderComponent extends ValueComponent<any[]> {
+export class SingleCascaderComponent extends ValueComponent<any[]> {
 
   placeholder: string;
   valueField: string;
   labelField: string;
   childrenField: string;
-  value: any[];
+  value: any;
   private _options: any[] = [];
   get options(): any[] {
     return this._options;
@@ -43,19 +43,19 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.update();
   }
 
-  convertedOptions: CascaderOption[] = [];
+  convertedOptions: SingleCascaderOption[] = [];
   readonly saveCommonMax = 10;
   open = false;
-  commonOptions: CascaderOption[] = [];
-  commonCheckedAll = false;
+  commonOptions: SingleCascaderOption[] = [];
+  // commonCheckedAll = false;
   selectedIndexes: number[] = [];
-  leafOptions: CascaderOption[] = [];
+  leafOptions: SingleCascaderOption[] = [];
   searchText = '';
-  searchOptions: CascaderOption[] = [];
-  searchCheckedAll = false;
+  searchOptions: SingleCascaderOption[] = [];
+  // searchCheckedAll = false;
   showSearch = true;
 
-  get columns(): CascaderOption[][] {
+  get columns(): SingleCascaderOption[][] {
     let list = this.convertedOptions;
     let result = [list];
     for (let i = 0; this.selectedIndexes[i] != null; i++) {
@@ -71,36 +71,45 @@ export class CascaderComponent extends ValueComponent<any[]> {
   };
 
   // 获取被勾选的所有叶子节点
-  get checkedOptions(): CascaderOption[] {
-    let checkedOptions = [];
-    let options = this.convertedOptions;  // 待搜索列表
-    while (options.length > 0) {
-      // 新增放进待搜索列表
-      const currChecked = options.filter(value => (!value.children || !value.children.length) && value.checked);
-      checkedOptions = checkedOptions.concat(currChecked);
-      options = options.filter(value => value.children && value.children.length)
-        .flatMap(value => value.children) // 搜索待搜索列表
-    }
-    return checkedOptions;
+  // get checkedOptions(): SingleCascaderOption[] {
+  //   let checkedOptions = [];
+  //   let options = this.convertedOptions;  // 待搜索列表
+  //   while (options.length > 0) {
+  //     // 新增放进待搜索列表
+  //     const currChecked = options.filter(value => (!value.children || !value.children.length) && value.checked);
+  //     checkedOptions = checkedOptions.concat(currChecked);
+  //     options = options.filter(value => value.children && value.children.length)
+  //       .flatMap(value => value.children) // 搜索待搜索列表
+  //   }
+  //   return checkedOptions;
+  // }
+  //
+  // // 用于界面展示
+  // get checkedOptionStr(): string {
+  //   return this.checkedOptions.map(value => value.label).join(',');
+  // }
+
+  get selectedOptions(): SingleCascaderOption[] {
+    return this.leafOptions.filter(value => value.selected);
   }
 
   // 用于界面展示
-  get checkedOptionStr(): string {
-    return this.checkedOptions.map(value => value.label).join(',');
+  get selectedOptionStr(): string {
+    return this.selectedOptions.map(value => value.label).join(',');
   }
 
-  constructor(args: CascaderComponentProps) {
+  constructor(args: SingleCascaderComponentProps) {
     super(args);
     this.placeholder = args.placeholder;
     this.valueField = args.valueField || 'value';
     this.labelField = args.labelField || 'label';
     this.childrenField = args.childrenField || 'children';
-    this.value = args.value || [];
+    this.value = args.value;
     this.options = args.options;
   }
 
   writeValue(value: string) {
-    this.value = value ? value.split(',') : [];
+    this.value = value;
   }
 
   // 组件声明周期hook，当组件创建后调用，此时尚未挂载DOM
@@ -139,33 +148,46 @@ export class CascaderComponent extends ValueComponent<any[]> {
   };
 
   // 勾选
-  checkOption(option: CascaderOption, checked: boolean) {
-    option.checked = checked;
-    this.checkChildren(option, checked);
-    this.checkAll(option.parent);
-    this.checkCommonOption();
-    this.checkSearchOption();
-    this.onChange(this.checkedOptions.map(value1 => value1.value));
+  // checkOption(option: SingleCascaderOption, checked: boolean) {
+  //   option.checked = checked;
+  //   this.checkChildren(option, checked);
+  //   this.checkAll(option.parent);
+  //   // this.checkCommonOption();
+  //   // this.checkSearchOption();
+  //   this.onChange(this.checkedOptions.map(value1 => value1.value));
+  //   this.update();
+  // }
+
+  selectOption(option: SingleCascaderOption, level?: number, index?: number) {
+    if (level != null && index != null) {
+      this.nextLevel(level, index)
+    }
+    debugger
+    if (!option.children || !option.children.length) {
+      option.selected = true;
+      this.checkAll(option.parent);
+      this.onChange(option.value);
+    }
     this.update();
   }
 
-  commonCheckAll = (e: Event) => {
-    const checked = e.target['checked'];
-    this.commonOptions.forEach(value => this.checkOption(value, checked));
-    this.update();
-  };
+  // commonCheckAll = (e: Event) => {
+  //   const checked = e.target['checked'];
+  //   this.commonOptions.forEach(value => this.checkOption(value, checked));
+  //   this.update();
+  // };
 
 
 
   // 添加parent字段
-  addParent(option: CascaderOption) {
+  addParent(option: SingleCascaderOption) {
     option.children.forEach(value => {
       value.parent = option;
       this.addParent(value);
     })
   }
 
-  leafChildren(options: CascaderOption[]): CascaderOption[] {
+  leafChildren(options: SingleCascaderOption[]): SingleCascaderOption[] {
     const childrenLeaf = options.flatMap(value => this.leafChildren(value.children));
     const leaf = options.filter(value => !value.children || !value.children.length);
     return [...childrenLeaf, ...leaf];
@@ -173,9 +195,9 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
   clear = () => {
     this.searchText = '';
-    this.commonCheckedAll = false;
-    this.checkedOptions.forEach(value => {
-      value.checked = false;
+    // this.commonCheckedAll = false;
+    this.selectedOptions.forEach(value => {
+      value.selected = false;
       this.checkAll(value.parent);
     });
     this.update();
@@ -187,15 +209,15 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.searchOptions =  this.leafOptions.filter(value => {
       return value.label && value.label.includes(this.searchText);
     });
-    this.checkSearchOption();
+    // this.checkSearchOption();
     this.update();
   };
 
-  searchCheckAll = (e) => {
-    const checked = e.target['checked'];
-    this.searchOptions.forEach(value => this.checkOption(value, checked));
-    this.update();
-  };
+  // searchCheckAll = (e) => {
+  //   const checked = e.target['checked'];
+  //   this.searchOptions.forEach(value => this.checkOption(value, checked));
+  //   this.update();
+  // };
 
   openPopup = (e: Event) => {
     e.stopPropagation();
@@ -215,46 +237,46 @@ export class CascaderComponent extends ValueComponent<any[]> {
     valueField,
     labelField,
     childrenField,
-    parent: CascaderOption,
-    values?: any[],
-  ): CascaderOption[] {
+    parent: SingleCascaderOption,
+    value?: any,
+  ): SingleCascaderOption[] {
     return options.map(option => {
       return {
         value: option[valueField],
         label: option[labelField],
-        checked: (values || []).includes(String(option[valueField])),
-        children: this.convert(option[childrenField] || [], valueField, labelField, childrenField, option, values),
+        checked: String(value) === (String(option[valueField])),
+        children: this.convert(option[childrenField] || [], valueField, labelField, childrenField, option, value),
         parent,
       }
     })
   }
 
-  optionChange(e: Event, option: CascaderOption) {
-    const checked = e.target['checked'];
-    this.checkOption(option, checked);
-    this.update();
-  }
+  // optionChange(e: Event, option: SingleCascaderOption) {
+  //   const checked = e.target['checked'];
+  //   this.checkOption(option, checked);
+  //   this.update();
+  // }
 
   // 判断父节点是否需要勾选(当子节点全选时)
-  checkAll(option: CascaderOption) {
+  checkAll(option: SingleCascaderOption) {
     if (!option) {
       return;
     }
-    const check = option.children && option.children.length > 0 &&  option.children.every(value => value.checked);
-    if (check !== option.checked) {
-      option.checked = check;
+    const select = option.children && option.children.length > 0 &&  option.children.every(value => value.selected);
+    if (select !== option.selected) {
+      option.selected = select;
       this.checkAll(option.parent);
     }
   }
 
   // 设置option的check状态，并递归更新子节点，然后saveCommonOption
-  checkChildren(option: CascaderOption, check: boolean) {
-    option.checked = check;
+  checkChildren(option: SingleCascaderOption, select: boolean) {
+    option.selected = select;
     if (option.children && option.children.length > 0) {
       option.children.forEach(value => {
-        this.checkChildren(value, check);
+        this.checkChildren(value, select);
       });
-    } else if (check) { // 如果是被选中的叶子节点
+    } else if (select) { // 如果是被选中的叶子节点
       this.saveCommonOption(option);
     }
   }
@@ -266,7 +288,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   }
 
   // 保存常用选择到localStorage中
-  saveCommonOption(option: CascaderOption) {
+  saveCommonOption(option: SingleCascaderOption) {
     if (this.commonOptions.includes(option)) {
       return;
     }
@@ -286,17 +308,17 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
 
   // 更新常用选择全选状态
-  checkCommonOption() {
-    this.commonCheckedAll = this.commonOptions && this.commonOptions.length && this.commonOptions.every(value => value.checked);
-  }
+  // checkCommonOption() {
+  //   this.commonCheckedAll = this.commonOptions && this.commonOptions.length && this.commonOptions.every(value => value.checked);
+  // }
 
   // 更新搜索选择全选状态
-  checkSearchOption() {
-    this.searchCheckedAll = this.searchOptions && this.searchOptions.length && this.searchOptions.every(value => value.checked);
-  }
+  // checkSearchOption() {
+  //   this.searchCheckedAll = this.searchOptions && this.searchOptions.length && this.searchOptions.every(value => value.checked);
+  // }
 
   render() {
-    const checkedOptions = this.checkedOptions;
+    // const checkedOptions = this.checkedOptions;
     let popup: VNode;
     if (this.open) {
       popup = <div class="ps-popup" ref="popup">
@@ -305,14 +327,14 @@ export class CascaderComponent extends ValueComponent<any[]> {
           <div class="ps-search-input" ref="search">
             <input type="text" class="form-control input-sm" value={this.searchText} oninput={this.searchChange} onfocus={this.openSearchPopup} placeholder="请输入搜索关键字"/>
             {this.searchText && this.showSearch && (<div class="ps-search-popup" >
-              <label class="ps-label">
-                  <input class="ps-checkbox" type="checkbox" checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>
-                  全选
-              </label>
+              {/*<label class="ps-label">*/}
+              {/*    <input class="ps-checkbox" type="checkbox" checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>*/}
+              {/*    全选*/}
+              {/*</label>*/}
                 <div class="ps-label ps-search-options">
                   { this.searchOptions.map(value =>
-                    <label key={value.value} class="ps-label ps-search-option">
-                      <input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
+                    <label key={value.value} class="ps-label ps-search-option" onclick={() => this.selectOption(value)}>
+                      {/*<input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>*/}
                       <span dangerouslySetInnerHTML={value.label.replace(this.searchText, str => str.fontcolor("#1481db"))}>
                       </span>
                     </label>
@@ -325,13 +347,13 @@ export class CascaderComponent extends ValueComponent<any[]> {
         {/*常用选择*/}
         <div class="ps-commonly-used">
           <label class="ps-label">
-            <input class="ps-checkbox" type="checkbox" checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>
+            {/*<input class="ps-checkbox" type="checkbox" checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>*/}
             常用选择
           </label>
           <div class="ps-commonly-used-options">
             {this.commonOptions.map(value =>
-              <label key={value.value} class="ps-label ps-commonly-used-option">
-                <input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
+              <label key={value.value} class="ps-label ps-commonly-used-option" onclick={() => this.selectOption(value)}>
+                {/*<input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>*/}
                 {value.label}
               </label>
             )}
@@ -344,9 +366,8 @@ export class CascaderComponent extends ValueComponent<any[]> {
               {value.map((value1, index) =>
                 <div
                   class={['ps-option', value1.children && value1.children.length > 0 ? 'ps-option-next' : '', index === this.selectedIndexes[level] ? 'ps-option-selected' : ''].join(' ')}
-                  onclick={() => this.nextLevel(level, index)}>
-                  <input class="ps-checkbox" type="checkbox" onchange={(e) => this.optionChange(e, value1)}
-                         checked={value1.checked}/>
+                  onclick={() => this.selectOption(value1, level, index)}>
+                  {/*<input class="ps-checkbox" type="checkbox" onchange={(e) => this.optionChange(e, value1)} checked={value1.checked}/>*/}
                   <div class="ps-option-text" title={value1.label}>{value1.label}</div>
                 </div>
               )}
@@ -354,28 +375,28 @@ export class CascaderComponent extends ValueComponent<any[]> {
           )}
         </div>
         {/*已选择计数*/}
-        <div class="ps-selected-cnt">
+        {/*<div class="ps-selected-cnt">
           <span class="ps-selected-label">已选择</span>
           {String(checkedOptions.length)}/{this.leafOptions.length}
-        </div>
+        </div>*/}
         {/*已选择option*/}
-        <div class="ps-selected-tags">
+        {/*<div class="ps-selected-tags">
           {checkedOptions.map(value =>
             <div class="ps-selected-tag">
               {value.label}
               <span class="ps-close" onclick={() => this.checkOption(value, false)}>×</span>
             </div>
           )}
-        </div>
+        </div>*/}
       </div>;
     }
 
     return (
       <div class="ps-selector" ref="selector">
         <div class="input-group">
-          <input type="text" class="form-control input-sm ps-input" value={this.checkedOptionStr} placeholder={this.placeholder} onclick={this.openPopup}
+          <input type="text" class="form-control input-sm ps-input" value={this.selectedOptionStr} placeholder={this.placeholder} onclick={this.openPopup}
                  aria-describedby="basic-addon2" readonly/>
-          <span class="input-group-addon" id="basic-addon2">{this.checkedOptions.length}项</span>
+          <span class="input-group-addon" id="basic-addon2">{this.selectedOptions.length}项</span>
         </div>
         {popup}
       </div>
@@ -388,8 +409,8 @@ export class CascaderComponent extends ValueComponent<any[]> {
 // 挂载为jquery插件
 
 mountInput({
-  name: 'cascader',
-  componentType: CascaderComponent,
+  name: 'singleCascader',
+  componentType: SingleCascaderComponent,
   props: ['valueField', 'labelField', 'childrenField', 'placeholder'],
   $: $,
 })
