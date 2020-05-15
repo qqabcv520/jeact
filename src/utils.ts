@@ -56,7 +56,7 @@ export function mountInput(
     $(`[${getKebabCase(name)}]`).each(function (this) {
       const $selected = $(this);
       const propsValue = props.reduce((pre, curr) => {
-        pre[curr] = $selected.attr(curr);
+        pre[curr] = $selected.attr(getKebabCase(curr));
         return pre;
       }, {})
       $selected[name](propsValue);

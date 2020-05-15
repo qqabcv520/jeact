@@ -5,24 +5,25 @@ import $ from 'jquery';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
 
-export interface CascaderOption {
+export interface PmSelectorOption {
   value: any;
   label: string;
   checked?: boolean;
-  parent?: CascaderOption;
-  children?: CascaderOption[];
+  parent?: PmSelectorOption;
+  children?: PmSelectorOption[];
 }
 
-export interface CascaderComponentProps extends ValueComponentProps<any[]> {
-  placeholder?: string;
-  options?: any[];
-  valueField?: string;
-  labelField?: string;
-  childrenField?: string;
+export interface PmSelectorComponentProps extends ValueComponentProps<any[]> {
+  psPlaceholder?: string;
+  psOptions?: any[];
+  psValueField?: string;
+  psLabelField?: string;
+  psChildrenField?: string;
   value?: any[];
+  psUrl: string;
 }
 
-export class CascaderComponent extends ValueComponent<any[]> {
+export class PmSelectorComponent extends ValueComponent<any[]> {
 
   placeholder: string;
   valueField: string;
@@ -42,20 +43,33 @@ export class CascaderComponent extends ValueComponent<any[]> {
     }
     this.update();
   }
+  private _url: string;
+  get url(): string {
+    return this._url;
+  }
 
-  convertedOptions: CascaderOption[] = [];
+  set url(value: string) {
+    this._url = value;
+    $.get(value, (res) => {
+      if (res && res.success) {
+        this.options = res.result;
+      }
+    })
+  }
+
+  convertedOptions: PmSelectorOption[] = [];
   readonly saveCommonMax = 10;
   open = false;
-  commonOptions: CascaderOption[] = [];
+  commonOptions: PmSelectorOption[] = [];
   commonCheckedAll = false;
   selectedIndexes: number[] = [];
-  leafOptions: CascaderOption[] = [];
+  leafOptions: PmSelectorOption[] = [];
   searchText = '';
-  searchOptions: CascaderOption[] = [];
+  searchOptions: PmSelectorOption[] = [];
   searchCheckedAll = false;
   showSearch = true;
 
-  get columns(): CascaderOption[][] {
+  get columns(): PmSelectorOption[][] {
     let list = this.convertedOptions;
     let result = [list];
     for (let i = 0; this.selectedIndexes[i] != null; i++) {
@@ -71,7 +85,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   };
 
   // 获取被勾选的所有叶子节点
-  get checkedOptions(): CascaderOption[] {
+  get checkedOptions(): PmSelectorOption[] {
     let checkedOptions = [];
     let options = this.convertedOptions;  // 待搜索列表
     while (options.length > 0) {
@@ -89,14 +103,18 @@ export class CascaderComponent extends ValueComponent<any[]> {
     return this.checkedOptions.map(value => value.label).join(',');
   }
 
-  constructor(args: CascaderComponentProps) {
+  constructor(args: PmSelectorComponentProps) {
     super(args);
-    this.placeholder = args.placeholder;
-    this.valueField = args.valueField || 'value';
-    this.labelField = args.labelField || 'label';
-    this.childrenField = args.childrenField || 'children';
+    this.placeholder = args.psPlaceholder;
+    this.valueField = args.psValueField || 'value';
+    this.labelField = args.psLabelField || 'label';
+    this.childrenField = args.psChildrenField || 'children';
     this.value = args.value || [];
-    this.options = args.options;
+    if (args.psOptions) {
+      this.options = args.psOptions;
+    } else if (args.psUrl) {
+      this.url = args.psUrl;
+    }
   }
 
   writeValue(value: string) {
@@ -143,7 +161,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   };
 
   // 勾选
-  checkOption(option: CascaderOption, checked: boolean) {
+  checkOption(option: PmSelectorOption, checked: boolean) {
     option.checked = checked;
     this.checkChildren(option, checked);
     this.checkAll(option.parent);
@@ -162,14 +180,14 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
 
   // 添加parent字段
-  addParent(option: CascaderOption) {
+  addParent(option: PmSelectorOption) {
     option.children.forEach(value => {
       value.parent = option;
       this.addParent(value);
     })
   }
 
-  leafChildren(options: CascaderOption[]): CascaderOption[] {
+  leafChildren(options: PmSelectorOption[]): PmSelectorOption[] {
     const childrenLeaf = options.flatMap(value => this.leafChildren(value.children));
     const leaf = options.filter(value => !value.children || !value.children.length);
     return [...childrenLeaf, ...leaf];
@@ -219,9 +237,9 @@ export class CascaderComponent extends ValueComponent<any[]> {
     valueField,
     labelField,
     childrenField,
-    parent: CascaderOption,
+    parent: PmSelectorOption,
     values?: any[],
-  ): CascaderOption[] {
+  ): PmSelectorOption[] {
     return options.map(option => {
       return {
         value: option[valueField],
@@ -233,14 +251,14 @@ export class CascaderComponent extends ValueComponent<any[]> {
     })
   }
 
-  optionChange(e: Event, option: CascaderOption) {
+  optionChange(e: Event, option: PmSelectorOption) {
     const checked = e.target['checked'];
     this.checkOption(option, checked);
     this.update();
   }
 
   // 判断父节点是否需要勾选(当子节点全选时)
-  checkAll(option: CascaderOption) {
+  checkAll(option: PmSelectorOption) {
     if (!option) {
       return;
     }
@@ -252,7 +270,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   }
 
   // 设置option的check状态，并递归更新子节点，然后saveCommonOption
-  checkChildren(option: CascaderOption, check: boolean) {
+  checkChildren(option: PmSelectorOption, check: boolean) {
     option.checked = check;
     if (option.children && option.children.length > 0) {
       option.children.forEach(value => {
@@ -270,7 +288,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   }
 
   // 保存常用选择到localStorage中
-  saveCommonOption(option: CascaderOption) {
+  saveCommonOption(option: PmSelectorOption) {
     if (this.commonOptions.includes(option)) {
       return;
     }
@@ -391,8 +409,8 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
 // 挂载为jquery插件
 mountInput({
-  name: 'cascader',
-  componentType: CascaderComponent,
-  props: ['valueField', 'labelField', 'childrenField', 'placeholder'],
+  name: 'pmSelector',
+  componentType: PmSelectorComponent,
+  props: ['psValueField', 'psLabelField', 'psChildrenField', 'psPlaceholder', 'psUrl'],
   $: $,
 })
