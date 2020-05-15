@@ -294,12 +294,12 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
       this.commonOptions = this.commonOptions.slice(0, this.saveCommonMax);
     }
     const commonOptions = this.commonOptions.map(value => value.value);
-    localStorage.setItem('commonOptions', JSON.stringify(commonOptions));
+    localStorage.setItem(this.cacheName, JSON.stringify(commonOptions));
   }
 
   // 加载localStorage中的常用选择
   loadCommonOption() {
-    const commonOptions: string[] = JSON.parse(localStorage.getItem('commonOptions')) || [];
+    const commonOptions: string[] = JSON.parse(localStorage.getItem(this.cacheName)) || [];
     this.commonOptions = commonOptions.map(value => this.leafOptions.find(value1 => value1.value === value)).filter(value => value);
   }
 
