@@ -114,7 +114,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
 =======
     this.value = value ? value.split(',') : [];
     if (this.convertedOptions != null) {
-      this.leafOptions.forEach(value1 => value1.checked = this.value.includes(value1.value))
+      this.leafOptions.forEach(value1 => value1.selected = this.value === value1.value)
       this.update();
     }
 >>>>>>> 3dab384... --task=1497413 --user=范子才 【前端】【禁售配置】根据配置类目组装通用类目树 https://www.tapd.cn/55786408/s/4058911
