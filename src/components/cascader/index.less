@@ -1,22 +1,22 @@
-.ps-selector {
+.bgx-cascader {
   display: inline-block;
   width: 150px;
   position: relative;
 
-  .ps-label {
+  .bgxlabel {
     display: inline-flex;
     align-items: center;
     margin: 8px 0;
   }
 
-  input[type=checkbox].ps-checkbox {
+  input[type=checkbox].bgxcheckbox {
     margin: 4px;
     position: relative;
     width: 14px;
     height: 14px;
     cursor: pointer;
   }
-  input[type=checkbox].ps-checkbox::before {
+  input[type=checkbox].bgxcheckbox::before {
     content: '';
     line-height: 14px;
     font-size: 10px;
@@ -29,14 +29,14 @@
     border-radius: 2px;
     vertical-align: top;
   }
-  input[type=checkbox].ps-checkbox:checked::before {
+  input[type=checkbox].bgxcheckbox:checked::before {
     background-color: #2599ab;
     border-color: transparent;
   }
-  input[type=checkbox].ps-checkbox::after {
+  input[type=checkbox].bgxcheckbox::after {
     content: '';
   }
-  input[type=checkbox].ps-checkbox:checked::after {
+  input[type=checkbox].bgxcheckbox:checked::after {
     position: absolute;
     top: 4px;
     left: 3px;
@@ -46,16 +46,16 @@
     border-bottom: 2px solid #fff;
     transform: rotateZ(-45deg);
   }
-  .ps-close {
+  .bgxclose {
     font-family: "黑体", serif;
     font-weight: bold;
     cursor: pointer;
     color: #666;
   }
-  .ps-close:hover {
+  .bgxclose:hover {
     color: #888;
   }
-  .ps-close:active {
+  .bgxclose:active {
     color: #333;
   }
 
@@ -96,13 +96,13 @@
     background: transparent
   }
 
-  .ps-input.form-control {
+  .bgxinput.form-control {
     background-color: #fff;
     box-shadow: none;
     cursor: pointer;
   }
 
-  .ps-popup {
+  .bgxpopup {
     font-size: 12px;
     top: 30px;
     left: 0;
@@ -113,33 +113,33 @@
     box-shadow: 0 1px 10px rgba(0,0,0,0.1);
   }
 
-  .ps-search-bar {
+  .bgxsearch-bar {
     background-color: #fff;
     padding: 8px;
     display: flex;
     justify-content: flex-end;
   }
 
-  .ps-search-input {
+  .bgxsearch-input {
     width: 300px;
     margin-right: 8px;
     position: relative;
   }
-  .ps-search-input > input.form-control {
+  .bgxsearch-input > input.form-control {
     width: 100%;
   }
 
-  .ps-commonly-used {
+  .bgxcommonly-used {
     background-color: #eee;
     padding: 4px 0;
   }
 
-  .ps-commonly-used-options {
+  .bgxcommonly-used-options {
     display: flex;
     flex-wrap: wrap;
     min-height: 60px;
   }
-  .ps-commonly-used-option {
+  .bgxcommonly-used-option {
     margin-top: 0;
     font-weight: normal;
     width: 20%;
@@ -149,7 +149,7 @@
 
   }
 
-  .ps-options {
+  .bgxoptions {
     display: flex;
     height: 250px;
     width: 100%;
@@ -157,14 +157,14 @@
     background-color: #fff;
   }
 
-  .ps-column {
+  .bgxcolumn {
     border-right: 1px #eee solid;
     flex-shrink: 0;
     width: 120px;
     overflow: auto;
   }
 
-  .ps-option {
+  .bgxoption {
     margin: 1px 0;
     padding: 4px 0;
     cursor: pointer;
@@ -172,16 +172,16 @@
     display: flex;
     align-items: center;
   }
-  .ps-option:hover {
+  .bgxoption:hover {
     background-color: #eee;
   }
-  .ps-option-selected {
+  .bgxoption-selected {
     background-color: #eee;
   }
-  .ps-option.ps-option-next {
+  .bgxoption.bgxoption-next {
     padding-right: 20px;
   }
-  .ps-option.ps-option-next::after {
+  .bgxoption.bgxoption-next::after {
     position: absolute;
     right: 0;
     top: 10px;
@@ -191,22 +191,22 @@
     border: 5px transparent solid;
     border-left: 7px #999 solid;
   }
-  .ps-option-text {
+  .bgxoption-text {
     flex-grow: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .ps-selected-cnt {
+  .bgxselected-cnt {
     padding: 6px 6px 0;
     background-color: #fff;
   }
-  .ps-selected-label {
+  .bgxselected-label {
     font-weight: bold;
     margin-right: 5px;
   }
 
-  .ps-selected-tags {
+  .bgxselected-tags {
     display: flex;
     flex-wrap: wrap;
     padding: 4px;
@@ -215,7 +215,7 @@
     background-color: #fff;
   }
 
-  .ps-selected-tag {
+  .bgxselected-tag {
     font-size: 13px;
     padding: 3px;
     width: auto;
@@ -226,7 +226,7 @@
     border-radius: 2px;
   }
 
-  .ps-search-popup {
+  .bgxsearch-popup {
     position: absolute;
     background-color: #fff;
     top: 30px;
@@ -238,12 +238,12 @@
     z-index: 200;
   }
 
-  .ps-search-options {
+  .bgxsearch-options {
     display: flex;
     flex-wrap: wrap;
     min-height: 60px;
   }
-  .ps-search-option {
+  .bgxsearch-option {
     font-size: 12px;
     margin-top: 0;
     font-weight: normal;

@@ -303,20 +303,20 @@ export class CascaderComponent extends ValueComponent<any[]> {
     const checkedOptions = this.checkedOptions;
     let popup: VNode;
     if (this.open) {
-      popup = <div class="ps-popup" ref="popup">
+      popup = <div class="bgx-popup" ref="popup">
         {/*搜索栏*/}
-        <div class="ps-search-bar">
-          <div class="ps-search-input" ref="search">
+        <div class="bgx-search-bar">
+          <div class="bgx-search-input" ref="search">
             <input type="text" class="form-control input-sm" value={this.searchText} oninput={this.searchChange} onfocus={this.openSearchPopup} placeholder="请输入搜索关键字"/>
-            {this.searchText && this.showSearch && (<div class="ps-search-popup" >
-              <label class="ps-label">
-                  <input class="ps-checkbox" type="checkbox" checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>
+            {this.searchText && this.showSearch && (<div class="bgx-search-popup" >
+              <label class="bgx-label">
+                  <input class="bgx-checkbox" type="checkbox" checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>
                   全选
               </label>
-                <div class="ps-label ps-search-options">
+                <div class="bgx-label bgx-search-options">
                   { this.searchOptions.map(value =>
-                    <label key={value.value} class="ps-label ps-search-option">
-                      <input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
+                    <label key={value.value} class="bgx-label bgx-search-option">
+                      <input class="bgx-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
                       <span dangerouslySetInnerHTML={value.label.replace(this.searchText, str => str.fontcolor("#1481db"))}>
                       </span>
                     </label>
@@ -327,47 +327,47 @@ export class CascaderComponent extends ValueComponent<any[]> {
           <button class="btn btn-default btn-sm" type="button" onclick={this.clear}>清空</button>
         </div>
         {/*常用选择*/}
-        <div class="ps-commonly-used">
-          <label class="ps-label">
-            <input class="ps-checkbox" type="checkbox" checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>
+        <div class="bgx-commonly-used">
+          <label class="bgx-label">
+            <input class="bgx-checkbox" type="checkbox" checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>
             常用选择
           </label>
-          <div class="ps-commonly-used-options">
+          <div class="bgx-commonly-used-options">
             {this.commonOptions.map(value =>
-              <label key={value.value} class="ps-label ps-commonly-used-option">
-                <input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
+              <label key={value.value} class="bgx-label bgx-commonly-used-option">
+                <input class="bgx-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
                 {value.label}
               </label>
             )}
           </div>
         </div>
         {/*options*/}
-        <div class="ps-options">
+        <div class="bgx-options">
           {this.columns.map((value, level) =>
-            <div class="ps-column">
+            <div class="bgx-column">
               {value.map((value1, index) =>
                 <div
-                  class={['ps-option', value1.children && value1.children.length > 0 ? 'ps-option-next' : '', index === this.selectedIndexes[level] ? 'ps-option-selected' : ''].join(' ')}
+                  class={['bgx-option', value1.children && value1.children.length > 0 ? 'bgx-option-next' : '', index === this.selectedIndexes[level] ? 'bgx-option-selected' : ''].join(' ')}
                   onclick={() => this.nextLevel(level, index)}>
-                  <input class="ps-checkbox" type="checkbox" onchange={(e) => this.optionChange(e, value1)}
+                  <input class="bgx-checkbox" type="checkbox" onchange={(e) => this.optionChange(e, value1)}
                          checked={value1.checked}/>
-                  <div class="ps-option-text" title={value1.label}>{value1.label}</div>
+                  <div class="bgx-option-text" title={value1.label}>{value1.label}</div>
                 </div>
               )}
             </div>
           )}
         </div>
         {/*已选择计数*/}
-        <div class="ps-selected-cnt">
-          <span class="ps-selected-label">已选择</span>
+        <div class="bgx-selected-cnt">
+          <span class="bgx-selected-label">已选择</span>
           {String(checkedOptions.length)}/{this.leafOptions.length}
         </div>
         {/*已选择option*/}
-        <div class="ps-selected-tags">
+        <div class="bgx-selected-tags">
           {checkedOptions.map(value =>
-            <div class="ps-selected-tag">
+            <div class="bgx-selected-tag">
               {value.label}
-              <span class="ps-close" onclick={() => this.checkOption(value, false)}>×</span>
+              <span class="bgx-close" onclick={() => this.checkOption(value, false)}>×</span>
             </div>
           )}
         </div>
@@ -375,9 +375,9 @@ export class CascaderComponent extends ValueComponent<any[]> {
     }
 
     return (
-      <div class="ps-selector" ref="selector">
+      <div class="bgx-cascader" ref="selector">
         <div class="input-group">
-          <input type="text" class="form-control input-sm ps-input" value={this.checkedOptionStr} placeholder={this.placeholder} onclick={this.openPopup}
+          <input type="text" class="form-control input-sm bgx-input" value={this.checkedOptionStr} placeholder={this.placeholder} onclick={this.openPopup}
                  aria-describedby="basic-addon2" readonly/>
           <span class="input-group-addon" id="basic-addon2">{this.checkedOptions.length}项</span>
         </div>
