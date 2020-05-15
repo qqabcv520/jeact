@@ -4,6 +4,7 @@ import { mountInput } from '../../utils';
 import $ from 'jquery';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
+import { CascaderOption } from '../cascader';
 
 export interface PmSelectorOption {
   value: any;
@@ -178,15 +179,6 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
   };
 
 
-
-  // 添加parent字段
-  addParent(option: PmSelectorOption) {
-    option.children.forEach(value => {
-      value.parent = option;
-      this.addParent(value);
-    })
-  }
-
   leafChildren(options: PmSelectorOption[]): PmSelectorOption[] {
     const childrenLeaf = options.flatMap(value => this.leafChildren(value.children));
     const leaf = options.filter(value => !value.children || !value.children.length);
@@ -241,13 +233,14 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     values?: any[],
   ): PmSelectorOption[] {
     return options.map(option => {
-      return {
+      const obj: CascaderOption = {
         value: option[valueField],
         label: option[labelField],
         checked: (values || []).includes(String(option[valueField])),
-        children: this.convert(option[childrenField] || [], valueField, labelField, childrenField, option, values),
         parent,
-      }
+      };
+      obj.children = this.convert(option[childrenField] || [], valueField, labelField, childrenField, obj, values);
+      return obj;
     })
   }
 

@@ -159,16 +159,6 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.update();
   };
 
-
-
-  // 添加parent字段
-  addParent(option: CascaderOption) {
-    option.children.forEach(value => {
-      value.parent = option;
-      this.addParent(value);
-    })
-  }
-
   leafChildren(options: CascaderOption[]): CascaderOption[] {
     const childrenLeaf = options.flatMap(value => this.leafChildren(value.children));
     const leaf = options.filter(value => !value.children || !value.children.length);
@@ -223,13 +213,14 @@ export class CascaderComponent extends ValueComponent<any[]> {
     values?: any[],
   ): CascaderOption[] {
     return options.map(option => {
-      return {
+      const obj: CascaderOption = {
         value: option[valueField],
         label: option[labelField],
         checked: (values || []).includes(String(option[valueField])),
-        children: this.convert(option[childrenField] || [], valueField, labelField, childrenField, option, values),
         parent,
-      }
+      };
+      obj.children = this.convert(option[childrenField] || [], valueField, labelField, childrenField, obj, values);
+      return obj;
     })
   }
 
