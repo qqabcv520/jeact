@@ -1,0 +1,234 @@
+.bgx-single-cascader {
+  display: inline-block;
+  width: 150px;
+  position: relative;
+
+  .bgx-label {
+    display: inline-flex;
+    align-items: center;
+    margin: 8px 0;
+  }
+
+  input[type=checkbox].bgx-checkbox {
+    margin: 4px;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+  }
+  input[type=checkbox].bgx-checkbox::before {
+    content: '';
+    line-height: 14px;
+    font-size: 10px;
+    color: #fff;
+    background-color: #fff;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1px #ccc solid;
+    border-radius: 2px;
+    vertical-align: top;
+  }
+  input[type=checkbox].bgx-checkbox:checked::before {
+    background-color: #2599ab;
+    border-color: transparent;
+  }
+  input[type=checkbox].bgx-checkbox::after {
+    content: '';
+  }
+  input[type=checkbox].bgx-checkbox:checked::after {
+    position: absolute;
+    top: 4px;
+    left: 3px;
+    width: 8px;
+    height: 5px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotateZ(-45deg);
+  }
+  .bgx-close {
+    font-family: "黑体", serif;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+  }
+  .bgx-close:hover {
+    color: #888;
+  }
+  .bgx-close:active {
+    color: #333;
+  }
+
+
+
+
+  .bgx-selector {
+    width: 150px;
+    position: relative;
+  }
+
+  .bgx-selector ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px
+  }
+
+  .bgx-selector ::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+  }
+
+  .bgx-selector ::-webkit-scrollbar-thumb {
+    background: #e1e1e1;
+    border: none;
+    border-radius: 0;
+  }
+
+  .bgx-selector ::-webkit-scrollbar-thumb:hover {
+    background: #cccccc
+  }
+
+  .bgx-selector ::-webkit-scrollbar-thumb:active {
+    background: #999999;
+  }
+
+  .bgx-selector ::-webkit-scrollbar-track {
+    border: 0 none #ffffff;
+    border-radius: 0;
+  }
+
+  .bgx-selector ::-webkit-scrollbar-track:hover {
+    background: #eee
+  }
+
+  .bgx-selector ::-webkit-scrollbar-corner {
+    background: transparent
+  }
+
+  .bgx-input.form-control {
+    background-color: #fff;
+    box-shadow: none;
+    cursor: pointer;
+  }
+
+  .bgx-popup {
+    font-size: 12px;
+    top: 30px;
+    left: 0;
+    position: absolute;
+    border: 1px #ddd solid;
+    width: 724px;
+    z-index: 1000;
+    box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+  }
+
+  .bgx-search-bar {
+    background-color: #fff;
+    padding: 8px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .bgx-search-input {
+    width: 300px;
+    margin-right: 8px;
+    position: relative;
+  }
+  .bgx-search-input > input.form-control {
+    width: 100%;
+  }
+
+  .bgx-commonly-used {
+    background-color: #eee;
+    padding: 4px;
+  }
+
+  .bgx-commonly-used-options {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 60px;
+  }
+  .bgx-commonly-used-option {
+    margin-top: 0;
+    font-weight: normal;
+    width: 20%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+
+  .bgx-options {
+    display: flex;
+    height: 250px;
+    width: 100%;
+    overflow: auto;
+    background-color: #fff;
+  }
+
+  .bgx-column {
+    border-right: 1px #eee solid;
+    flex-shrink: 0;
+    width: 120px;
+    overflow: auto;
+  }
+
+  .bgx-option {
+    margin: 1px 0;
+    padding: 4px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .bgx-option:hover {
+    background-color: #eee;
+  }
+  .bgx-option-selected {
+    background-color: #eee;
+  }
+  .bgx-option.bgx-option-next {
+    padding-right: 20px;
+  }
+  .bgx-option.bgx-option-next::after {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    content: "";
+    width: 14px;
+    height: 10px;
+    border: 5px transparent solid;
+    border-left: 7px #999 solid;
+  }
+  .bgx-option-text {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bgx-search-popup {
+    position: absolute;
+    background-color: #fff;
+    top: 30px;
+    width: 100%;
+    max-height: 380px;
+    overflow: auto;
+    border: 1px #eee solid;
+    padding: 4px;
+    z-index: 200;
+  }
+  .bgx-search-options {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 60px;
+  }
+  .bgx-search-option {
+    font-size: 12px;
+    margin-top: 0;
+    font-weight: normal;
+    width: 33.333333%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

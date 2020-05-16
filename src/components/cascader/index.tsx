@@ -4,6 +4,7 @@ import { mountInput } from '../../utils';
 import $ from 'jquery';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
+import {SingleCascaderOption} from '../single-cascader';
 
 export interface CascaderOption {
   value: any;
@@ -133,18 +134,6 @@ export class CascaderComponent extends ValueComponent<any[]> {
     })
   }
 
-  // 关闭搜索弹窗
-  closeSearchPopup() {
-    this.showSearch = false;
-    this.update();
-  };
-
-  // 打开搜索弹窗
-  openSearchPopup = () => {
-    this.showSearch = true;
-    this.update()
-  };
-
   // 勾选
   checkOption(option: CascaderOption, checked: boolean) {
     option.checked = checked;
@@ -156,17 +145,17 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.update();
   }
 
+  // 展开下一级菜单
+  nextLevel(level: number, index: number) {
+    this.selectedIndexes[level] = index;
+    this.update();
+  }
+
   commonCheckAll = (e: Event) => {
     const checked = e.target['checked'];
     this.commonOptions.forEach(value => this.checkOption(value, checked));
     this.update();
   };
-
-  leafChildren(options: CascaderOption[]): CascaderOption[] {
-    const childrenLeaf = options.flatMap(value => this.leafChildren(value.children));
-    const leaf = options.filter(value => !value.children || !value.children.length);
-    return [...childrenLeaf, ...leaf];
-  }
 
   clear = () => {
     this.searchText = '';
@@ -192,6 +181,18 @@ export class CascaderComponent extends ValueComponent<any[]> {
     const checked = e.target['checked'];
     this.searchOptions.forEach(value => this.checkOption(value, checked));
     this.update();
+  };
+
+  // 关闭搜索弹窗
+  closeSearchPopup() {
+    this.showSearch = false;
+    this.update();
+  };
+
+  // 打开搜索弹窗
+  openSearchPopup = () => {
+    this.showSearch = true;
+    this.update()
   };
 
   openPopup = (e: Event) => {
@@ -227,6 +228,16 @@ export class CascaderComponent extends ValueComponent<any[]> {
     })
   }
 
+  leafChildren(options: CascaderOption[]): CascaderOption[] {
+    const childrenLeaf = options.flatMap(value => this.leafChildren(value.children));
+    const leaf = options.filter(value => this.isLeaf(value));
+    return [...childrenLeaf, ...leaf];
+  }
+
+  isLeaf(option: SingleCascaderOption): boolean {
+    return (!option.children || !option.children.length);
+  }
+
   optionChange(e: Event, option: CascaderOption) {
     const checked = e.target['checked'];
     this.checkOption(option, checked);
@@ -238,7 +249,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
     if (!option) {
       return;
     }
-    const check = option.children && option.children.length > 0 &&  option.children.every(value => value.checked);
+    const check = !this.isLeaf(option) &&  option.children.every(value => value.checked);
     if (check !== option.checked) {
       option.checked = check;
       this.checkAll(option.parent);
@@ -248,19 +259,13 @@ export class CascaderComponent extends ValueComponent<any[]> {
   // 设置option的check状态，并递归更新子节点，然后saveCommonOption
   checkChildren(option: CascaderOption, check: boolean) {
     option.checked = check;
-    if (option.children && option.children.length > 0) {
+    if (!this.isLeaf(option)) {
       option.children.forEach(value => {
         this.checkChildren(value, check);
       });
     } else if (check) { // 如果是被选中的叶子节点
       this.saveCommonOption(option);
     }
-  }
-
-  // 展开下一级菜单
-  nextLevel(level: number, index: number) {
-    this.selectedIndexes[level] = index;
-    this.update();
   }
 
   // 保存常用选择到localStorage中
