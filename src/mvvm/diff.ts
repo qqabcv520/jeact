@@ -193,7 +193,7 @@ export class Differentiator {
       const oldEl = oldVNode.el; // 当前oldVnode对应的真实元素节点
       let parentEl = oldEl.parentNode;  // 父元素
       newVNode.el = this.dom.createElement(newVNode);  // 根据Vnode生成新元素
-      this.dom.appendChild(parentEl, newVNode.el);
+      this.dom.insertBefore(parentEl, newVNode.el, oldEl);
       this.dom.removeChild(parentEl, oldEl); // 将新元素添加进父元素
     }
   }
