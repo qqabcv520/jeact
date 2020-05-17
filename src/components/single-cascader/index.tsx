@@ -125,7 +125,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
           this.closeSearchPopup();
         }
       }
-    })
+    }, true);
   }
 
   // 选择

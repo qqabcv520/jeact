@@ -149,7 +149,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
           this.closeSearchPopup();
         }
       }
-    })
+    }, true);
   }
 
   // 关闭搜索弹窗
