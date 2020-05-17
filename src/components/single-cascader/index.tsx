@@ -287,7 +287,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
           <div class="bgx-commonly-used-options">
             {this.commonOptions.map(value =>
               <label key={value.value} class="bgx-label bgx-commonly-used-option" onclick={() => this.selectOption(value)}>
-                {value.label}
+                <span class={[value.value === this.value ? 'bgx-option-selected' : '']}>{value.label}</span>
               </label>
             )}
           </div>
