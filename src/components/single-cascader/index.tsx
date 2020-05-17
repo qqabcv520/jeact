@@ -286,8 +286,11 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
           </label>
           <div class="bgx-commonly-used-options">
             {this.commonOptions.map(value =>
-              <label key={value.value} class="bgx-label bgx-commonly-used-option" onclick={() => this.selectOption(value)}>
-                <span class={[value.value === this.value ? 'bgx-option-selected' : '']}>{value.label}</span>
+              <label key={value.value} class={[
+                'bgx-label bgx-commonly-used-option',
+                this.selectedOptions.includes(value) ? 'bgx-option-selected' : ''
+              ].join(' ')} onclick={() => this.selectOption(value)}>
+                <span >{value.label}</span>
               </label>
             )}
           </div>
@@ -298,7 +301,11 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
             <div class="bgx-column">
               {value.map((value1, index) =>
                 <div
-                  class={['bgx-option', value1.children && value1.children.length > 0 ? 'bgx-option-next' : '', index === this.selectedIndexes[level] ? 'bgx-option-selected' : ''].join(' ')}
+                  class={[
+                    'bgx-option',
+                    value1.children && value1.children.length > 0 ? 'bgx-option-next' : '',
+                    index === this.selectedIndexes[level] ? 'bgx-option-selected' : ''
+                  ].join(' ')}
                   onclick={() => this.selectOption(value1, level, index)}>
                   <div class="bgx-option-text" title={value1.label}>{value1.label}</div>
                 </div>

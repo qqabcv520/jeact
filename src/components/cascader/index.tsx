@@ -119,7 +119,6 @@ export class CascaderComponent extends ValueComponent<any[]> {
   // 组件声明周期hook，当组件挂载DOM后调用
   mounted() {
     document.addEventListener('click',(e: any) => {
-      debugger
       if (this.refs.popup) {
         const path = e.path || (e.composedPath && e.composedPath());
         if (!(this.refs.popup as HTMLElement).contains(e.target) && !path.includes(this.refs.popup)) {
