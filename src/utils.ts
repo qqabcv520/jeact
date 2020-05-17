@@ -30,13 +30,10 @@ export function mountInput(
       if (!component) {
         $.error(`节点不是一个 ${name} 组件`);
       }
-      const method = component[propName];
-      if (!method) {
-        $.error(`方法 ${propName} 不存在于 ${name}`);
-        return this;
-      }
       if (typeof component[propName] === 'function') {
         component[propName](...methodArgs);
+      } else if (methodArgs != null && methodArgs.length === 1) {
+        return component[propName] = methodArgs[0];
       } else {
         return component[propName];
       }

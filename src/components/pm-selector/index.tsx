@@ -358,8 +358,8 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
         </div>
         {/*options*/}
         <div class="ps-options">
-          {this.columns.map((value, level) =>
-            <div class="ps-column">
+          {this.columns.map((value, level) => (
+            value && <div class="ps-column">
               {value.map((value1, index) =>
                 <div
                   class={['ps-option', value1.children && value1.children.length > 0 ? 'ps-option-next' : '', index === this.selectedIndexes[level] ? 'ps-option-selected' : ''].join(' ')}
@@ -370,7 +370,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
                 </div>
               )}
             </div>
-          )}
+          ))}
         </div>
         {/*已选择计数*/}
         <div class="ps-selected-cnt">

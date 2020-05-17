@@ -26,31 +26,32 @@
 <script src="../node_modules/jquery/dist/jquery.js"></script>
 <script src="../dist/bundle.js"></script>
 <script>
-  $.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list', {
-    success: function(res) {
-      if (res && res.success) {
-        $('#category1').cascader({
-          placeholder: '类目1',
-          valueField: 'categoryIdStr',
-          labelField: 'categoryName',
-          childrenField: 'subCategoriesList',
-          cacheName: 'categoryCascader',
-          options: res.result
-        })
-        $('#category2').singleCascader({
-          placeholder: '类目2',
-          valueField: 'categoryIdStr',
-          labelField: 'categoryName',
-          childrenField: 'subCategoriesList',
-          cacheName: 'categorySingleCascader',
-          options: res.result
-        })
-      }
-    },
-    type: 'POST',
-    contentType: "application/json",
-    data: JSON.stringify({ shopId: 8835 }),
-    headers: { platformNo: 27 }
-  });
+
+$('#category1').cascader({
+  placeholder: '类目1',
+  valueField: 'categoryIdStr',
+  labelField: 'categoryName',
+  childrenField: 'subCategoriesList',
+  cacheName: 'categorySingleCascader',
+})
+$('#category2').singleCascader({
+  placeholder: '类目2',
+  valueField: 'categoryIdStr',
+  labelField: 'categoryName',
+  childrenField: 'subCategoriesList',
+  cacheName: 'categorySingleCascader',
+})
+
+$.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list', {
+  success: function(res) {
+    if (res && res.success) {
+      $('#category2').singleCascader('options', res.result)
+    }
+  },
+  type: 'POST',
+  contentType: "application/json",
+  data: JSON.stringify({ shopId: 8835 }),
+  headers: { platformNo: 27 }
+});
 </script>
 </html>

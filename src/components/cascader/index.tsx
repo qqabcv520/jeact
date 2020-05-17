@@ -341,8 +341,8 @@ export class CascaderComponent extends ValueComponent<any[]> {
         </div>
         {/*options*/}
         <div class="bgx-options">
-          {this.columns.map((value, level) =>
-            <div class="bgx-column">
+          {this.columns.map((value, level) => (
+            value && <div class="bgx-column">
               {value.map((value1, index) =>
                 <div
                   class={['bgx-option', value1.children && value1.children.length > 0 ? 'bgx-option-next' : '', index === this.selectedIndexes[level] ? 'bgx-option-selected' : ''].join(' ')}
@@ -353,7 +353,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
                 </div>
               )}
             </div>
-          )}
+          ))}
         </div>
         {/*已选择计数*/}
         <div class="bgx-selected-cnt">

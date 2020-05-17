@@ -36,6 +36,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     return this._options;
   }
   set options(value: any[]) {
+    console.log(value);
     this._options = value;
     if (value != null) {
       this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
@@ -297,8 +298,8 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
         </div>
         {/*options*/}
         <div class="bgx-options">
-          {this.columns.map((value, level) =>
-            <div class="bgx-column">
+          {this.columns.map((value, level) => (
+            value && <div class="bgx-column">
               {value.map((value1, index) =>
                 <div
                   class={[
@@ -311,7 +312,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
                 </div>
               )}
             </div>
-          )}
+          ))}
         </div>
       </div>;
     }
