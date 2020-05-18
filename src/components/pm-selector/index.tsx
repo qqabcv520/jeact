@@ -39,11 +39,9 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
   }
   set options(value: any[]) {
     this._options = value;
-    if (value != null) {
-      this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
-      this.leafOptions = this.leafChildren(this.convertedOptions);
-      this.loadCommonOption();
-    }
+    this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
+    this.leafOptions = this.leafChildren(this.convertedOptions);
+    this.loadCommonOption();
     this.update();
   }
   private _url: string;
@@ -235,7 +233,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     parent: PmSelectorOption,
     values?: any[],
   ): PmSelectorOption[] {
-    return options.map(option => {
+    return (options || []).map(option => {
       const obj: CascaderOption = {
         value: option[valueField],
         label: option[labelField],

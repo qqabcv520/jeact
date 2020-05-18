@@ -1,7 +1,11 @@
 .bgx-single-cascader {
   display: inline-block;
-  width: 150px;
+  width: 100%;
   position: relative;
+
+  .input-group {
+    width: 100%;
+  }
 
   .bgx-label {
     display: inline-flex;
@@ -58,9 +62,6 @@
   .bgx-close:active {
     color: #333;
   }
-
-
-
 
   .bgx-selector {
     width: 150px;
@@ -228,6 +229,7 @@
   .bgx-search-option {
     font-size: 12px;
     margin-top: 0;
+    padding: 4px 8px;
     font-weight: normal;
     width: 33.333333%;
     white-space: nowrap;

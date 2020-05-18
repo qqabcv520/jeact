@@ -36,13 +36,14 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     return this._options;
   }
   set options(value: any[]) {
-    console.log(value);
     this._options = value;
-    if (value != null) {
-      this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
-      this.leafOptions = this.leafChildren(this.convertedOptions);
-      this.loadCommonOption();
+    this.convertedOptions = this.convert(value, this.valueField, this.labelField, this.childrenField, null, this.value);
+    this.leafOptions = this.leafChildren(this.convertedOptions);
+    if (this.selectedOptions.length) {
+      this.selectedIndexes = this.getSelectedIndexes(this.selectedOptions[0]);
+      this.selectedString = this.getSelectedString(this.selectedOptions[0]);
     }
+    this.loadCommonOption();
     this.update();
   }
 
@@ -51,6 +52,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   open = false;
   commonOptions: SingleCascaderOption[] = [];
   selectedIndexes: number[] = [];
+  selectedString = '';
   leafOptions: SingleCascaderOption[] = [];
   searchText = '';
   searchOptions: SingleCascaderOption[] = [];
@@ -75,11 +77,6 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     return this.leafOptions.filter(value => value.selected);
   }
 
-  // 用于界面展示
-  get selectedOptionStr(): string {
-    return this.selectedOptions.map(value => value.label).join(',');
-  }
-
   constructor(args: SingleCascaderComponentProps) {
     super(args);
     this.placeholder = args.placeholder;
@@ -99,7 +96,8 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     if (this.convertedOptions != null) {
       this.leafOptions.forEach(value1 => value1.selected = String(this.value) === String(value1.value));
       if (this.selectedOptions.length) {
-        this.selectedIndexes = this.getParentIndexes(this.selectedOptions[0]);
+        this.selectedIndexes = this.getSelectedIndexes(this.selectedOptions[0]);
+        this.selectedString = this.getSelectedString(this.selectedOptions[0]);
       }
       this.update();
     }
@@ -134,11 +132,12 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     if (level != null && index != null) {
       this.nextLevel(level, index)
     } else {
-      this.selectedIndexes = this.getParentIndexes(option);
+      this.selectedIndexes = this.getSelectedIndexes(option);
     }
     if (this.isLeaf(option)) {
       this.leafOptions.forEach(item => item.selected = false);
       option.selected = true;
+      this.selectedString = this.getSelectedString(option);
       this.saveCommonOption(option);
       this.onChange(option.value);
     }
@@ -152,7 +151,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     this.update();
   }
 
-  getParentIndexes(option: SingleCascaderOption) {
+  getSelectedIndexes(option: SingleCascaderOption): number[] {
     let indexes = [];
     let selectedOption = option;
     while (selectedOption.parent) {
@@ -166,12 +165,27 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     return indexes;
   }
 
+  getSelectedString(option: SingleCascaderOption): string {
+    let stringArr = [];
+    let selectedOption = option;
+    while (selectedOption.parent) {
+      const option = selectedOption.parent.children.find(val => String(val.value) === String(selectedOption.value))
+      selectedOption = selectedOption.parent;
+      stringArr.unshift(option);
+    }
+    // 获取第一级index
+    const firstOption = this.convertedOptions.find(val => String(val.value) === String(selectedOption.value));
+    stringArr.unshift(firstOption);
+    return stringArr.map(val => val.label).join(' > ');
+  }
+
   clear = () => {
     this.searchText = '';
     this.selectedOptions.forEach(value => {
       value.selected = false;
     });
     this.selectedIndexes = [];
+    this.selectedString = '';
     this.update();
     this.onChange([]);
   };
@@ -217,11 +231,11 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     parent: SingleCascaderOption,
     value?: any,
   ): SingleCascaderOption[] {
-    return options.map(option => {
+    return (options || []).map(option => {
       const obj: SingleCascaderOption = {
         value: option[valueField],
         label: option[labelField],
-        selected: String(value) === (String(option[valueField])),
+        selected: String(value || '') === (String(option[valueField])),
         parent,
       };
       obj.children = this.convert(option[childrenField] || [], valueField, labelField, childrenField, obj, value);
@@ -270,7 +284,10 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
             {this.searchText && this.showSearch && (<div class="bgx-search-popup" >
                 <div class="bgx-label bgx-search-options">
                   { this.searchOptions.map(value =>
-                    <label key={value.value} class="bgx-label bgx-search-option" onclick={() => this.selectOption(value)}>
+                    <label key={value.value} class={[
+                      'bgx-label bgx-search-option',
+                      this.selectedOptions.includes(value) ? 'bgx-option-selected' : ''
+                    ].join(' ')} onclick={() => this.selectOption(value)}>
                       <span dangerouslySetInnerHTML={value.label.replace(this.searchText, str => str.fontcolor("#1481db"))}>
                       </span>
                     </label>
@@ -319,9 +336,8 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     return (
       <div class="bgx-single-cascader" ref="selector">
         <div class="input-group">
-          <input type="text" class="form-control input-sm bgx-input" value={this.selectedOptionStr} placeholder={this.placeholder} onclick={this.openPopup}
+          <input type="text" class="form-control input-sm bgx-input" value={this.selectedString} placeholder={this.placeholder} onclick={this.openPopup}
                  aria-describedby="basic-addon2" readonly/>
-          <span class="input-group-addon" id="basic-addon2">{this.selectedOptions.length}项</span>
         </div>
         {popup}
       </div>
