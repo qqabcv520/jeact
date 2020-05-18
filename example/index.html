@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
-  <link rel="stylesheet" href="../dist/bundle.css">
+
+  <link rel="stylesheet"  href="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.css?v=20200515">
 </head>
 <body style="background-color: #f1f1f1">
 <input pm-selector ps-url="https://sales.banggood.cn/base/productManager/tree?roleId=3"
@@ -24,7 +25,8 @@
 </body>
 
 <script src="../node_modules/jquery/dist/jquery.js"></script>
-<script src="../dist/bundle.js"></script>
+
+<script src="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.js?v=20200515"></script>
 <script>
 
 $('#category1').cascader({
@@ -32,7 +34,7 @@ $('#category1').cascader({
   valueField: 'categoryIdStr',
   labelField: 'categoryName',
   childrenField: 'subCategoriesList',
-  cacheName: 'categorySingleCascader',
+  cacheName: 'categoryCascader',
 })
 $('#category2').singleCascader({
   placeholder: '类目2',
@@ -45,6 +47,7 @@ $('#category2').singleCascader({
 $.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list', {
   success: function(res) {
     if (res && res.success) {
+      $('#category1').cascader('options', res.result)
       $('#category2').singleCascader('options', res.result)
     }
   },
