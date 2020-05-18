@@ -1,7 +1,6 @@
 import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountInput } from '../../utils';
-import $ from 'jquery';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
 
@@ -350,6 +349,5 @@ mountInput({
   name: 'singleCascader',
   componentType: SingleCascaderComponent,
   props: ['valueField', 'labelField', 'childrenField', 'placeholder', 'cacheName'],
-  $: $,
 })
 

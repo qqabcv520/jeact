@@ -14,10 +14,9 @@ export function getKebabCase(str: string): string {
     .replace(reg2, ($, $1) => '-' + $1.toLowerCase())
     .replace(reg3, ($, $1) => '-' + $1.toLowerCase());
 }
-
 // 挂载为jquery插件
 export function mountInput(
-  {name, componentType, props, $ = window['JQuery']}: {name: string, componentType: Type<Component>, props: string[], $?: JQueryStatic}
+  {name, componentType, props, $ = window['$']}: {name: string, componentType: Type<Component>, props: string[], $?: any}
 ) {
   if ($ == null) {
     return;
@@ -61,5 +60,6 @@ export function mountInput(
   });
 
 }
+
 
 

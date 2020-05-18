@@ -1,10 +1,9 @@
 import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountInput } from '../../utils';
-import $ from 'jquery';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
-import {SingleCascaderOption} from '../single-cascader';
+import { SingleCascaderOption } from '../single-cascader';
 
 export interface CascaderOption {
   value: any;
@@ -390,5 +389,4 @@ mountInput({
   name: 'cascader',
   componentType: CascaderComponent,
   props: ['valueField', 'labelField', 'childrenField', 'placeholder', 'cacheName'],
-  $: $,
 })

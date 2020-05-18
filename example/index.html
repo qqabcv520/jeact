@@ -5,9 +5,10 @@
   <title>Title</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
   <link href="../dist/bundle.css" rel="stylesheet">
-<!--  <link href="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.css?v=20200515" rel="stylesheet">-->
+  <link href="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.css?v=20200518" rel="stylesheet">
 </head>
 <body style="background-color: #f1f1f1">
+<<<<<<< HEAD
 <input pm-selector ps-url="https://sales.banggood.cn/base/productManager/tree?roleId=3"
        ps-label-field="userName" ps-value-field="userId" ps-children-field="subordinateUserList" ps-placeholder="产品经理">
 <<<<<<< HEAD
@@ -23,6 +24,11 @@
 =======
 <input name="AmazonManager" pm-selector ps-url="https://sales.banggood.cn/base/productManager/tree?roleId=728" ps-placeholder="Amazon经理" ps-label-field="userName" ps-value-field="userId" ps-children-field="subordinateUserList">
 >>>>>>> 6c79360... chore: 输出模块改为umd
+=======
+<!--<input pm-selector ps-url="https://sales.banggood.cn/base/productManager/tree?roleId=3"-->
+<!--       ps-label-field="userName" ps-value-field="userId" ps-children-field="subordinateUserList" ps-placeholder="产品经理">-->
+<!--<input name="AmazonManager" pm-selector ps-url="https://sales.banggood.cn/base/productManager/tree?roleId=728" ps-placeholder="Amazon经理" ps-label-field="userName" ps-value-field="userId" ps-children-field="subordinateUserList">-->
+>>>>>>> 10834be... chore: 输出模块改为umd
 <input id="category1" name="xxx"  value="7639">
 <input id="category2" name="xxx"  value="7639">
 >>>>>>> ff93433... feat: 新增single-cascader组件
@@ -30,7 +36,7 @@
 
 <script src="../node_modules/jquery/dist/jquery.js"></script>
 <script src="../dist/bundle.js"></script>
-<!--<script src="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.js?v=20200515"></script>-->
+<script src="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.js?v=20200518"></script>
 <script>
 
 $('#category1').cascader({
@@ -48,7 +54,7 @@ $('#category2').singleCascader({
   cacheName: 'categorySingleCascader',
 })
 
-$.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list', {
+$.ajax('https://apisp.banggood.cn/saleslister/category/get_limit_tree_list', {
   success: function(res) {
     if (res && res.success) {
       $('#category1').cascader('options', res.result)

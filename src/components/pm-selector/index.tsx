@@ -1,10 +1,10 @@
 import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountInput } from '../../utils';
-import $ from 'jquery';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
 import { CascaderOption } from '../cascader';
+
 
 export interface PmSelectorOption {
   value: any;
@@ -15,6 +15,13 @@ export interface PmSelectorOption {
 }
 
 export interface PmSelectorComponentProps extends ValueComponentProps<any[]> {
+  placeholder?: string;
+  options?: any[];
+  valueField?: string;
+  labelField?: string;
+  childrenField?: string;
+  cacheName?: string;
+  url: string;
   psPlaceholder?: string;
   psOptions?: any[];
   psValueField?: string;
@@ -51,7 +58,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
 
   set url(value: string) {
     this._url = value;
-    $.get(value, (res) => {
+    window['$'].get(value, (res) => {
       if (res && res.success) {
         this.options = res.result;
       }
@@ -106,16 +113,16 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
 
   constructor(args: PmSelectorComponentProps) {
     super(args);
-    this.placeholder = args.psPlaceholder;
-    this.valueField = args.psValueField || 'value';
-    this.labelField = args.psLabelField || 'label';
-    this.childrenField = args.psChildrenField || 'children';
-    this.cacheName = args.psCacheName || 'commonOptions';
+    this.placeholder = args.psPlaceholder || args.placeholder;
+    this.valueField = args.psValueField || args.valueField || 'value';
+    this.labelField = args.psLabelField || args.labelField || 'label';
+    this.childrenField = args.psChildrenField || args.childrenField || 'children';
+    this.cacheName = args.psCacheName || args.cacheName || 'commonOptions';
     this.value = args.value || [];
-    if (args.psOptions) {
-      this.options = args.psOptions;
-    } else if (args.psUrl) {
-      this.url = args.psUrl;
+    if (args.psOptions || args.options) {
+      this.options = args.psOptions || args.options;
+    } else if (args.psUrl || args.url) {
+      this.url = args.psUrl || args.url;
     }
   }
 
@@ -407,5 +414,4 @@ mountInput({
   name: 'pmSelector',
   componentType: PmSelectorComponent,
   props: ['psValueField', 'psLabelField', 'psChildrenField', 'psPlaceholder', 'psUrl', 'psCacheName'],
-  $: $,
 })
