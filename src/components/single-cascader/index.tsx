@@ -1,6 +1,6 @@
 import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
-import { mountInput } from '../../utils';
+import { mountComponent } from '../../utils';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
 
@@ -345,7 +345,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
 }
 
 // 挂载为jquery插件
-mountInput({
+mountComponent({
   name: 'singleCascader',
   componentType: SingleCascaderComponent,
   props: ['valueField', 'labelField', 'childrenField', 'placeholder', 'cacheName'],

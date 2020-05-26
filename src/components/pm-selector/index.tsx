@@ -1,6 +1,6 @@
 import { ValueComponent } from '../../mvvm';
 import { createVNode, VNode } from '../../mvvm/v-node';
-import { mountInput } from '../../utils';
+import { mountComponent } from '../../utils';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
 import { CascaderOption } from '../cascader';
@@ -410,7 +410,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
 
 
 // 挂载为jquery插件
-mountInput({
+mountComponent({
   name: 'pmSelector',
   componentType: PmSelectorComponent,
   props: ['psValueField', 'psLabelField', 'psChildrenField', 'psPlaceholder', 'psUrl', 'psCacheName'],

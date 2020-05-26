@@ -719,7 +719,7 @@
 
 "@types/jquery@^3.3.38":
   version "3.3.38"
-  resolved "https://registry.npm.taobao.org/@types/jquery/download/@types/jquery-3.3.38.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fjquery%2Fdownload%2F%40types%2Fjquery-3.3.38.tgz#6385f1e1b30bd2bff55ae8ee75ea42a999cc3608"
+  resolved "https://registry.npm.taobao.org/@types/jquery/download/@types/jquery-3.3.38.tgz#6385f1e1b30bd2bff55ae8ee75ea42a999cc3608"
   integrity sha1-Y4Xx4bML0r/1WujudepCqZnMNgg=
   dependencies:
     "@types/sizzle" "*"
@@ -748,6 +748,11 @@
   version "2.3.2"
   resolved "https://registry.npm.taobao.org/@types/sizzle/download/@types/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
   integrity sha1-qBG4wY4rq6t9VCszZYh64uTZ3kc=
+
+"@types/sortablejs@^1.10.4":
+  version "1.10.4"
+  resolved "https://registry.npm.taobao.org/@types/sortablejs/download/@types/sortablejs-1.10.4.tgz?cache=0&sync_timestamp=1588203322296&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fsortablejs%2Fdownload%2F%40types%2Fsortablejs-1.10.4.tgz#1be9681f6c9a405146644f52d76b74c7beb0dbd6"
+  integrity sha1-G+loH2yaQFFGZE9S12t0x76w29Y=
 
 "@types/tapable@*":
   version "1.0.4"
@@ -1485,6 +1490,11 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+classname@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.npm.taobao.org/classname/download/classname-0.0.0.tgz#43d171b484e354c7a293a5b78004df6852db20d6"
+  integrity sha1-Q9FxtITjVMeik6W3gATfaFLbINY=
 
 clean-webpack-plugin@^3.0.0:
   version "3.0.0"
@@ -4818,6 +4828,11 @@ sort-keys@^1.0.0:
   integrity sha1-RBttTTRnmPG05J6JIK37oOVD+a0=
   dependencies:
     is-plain-obj "^1.0.0"
+
+sortablejs@^1.10.2:
+  version "1.10.2"
+  resolved "https://registry.npm.taobao.org/sortablejs/download/sortablejs-1.10.2.tgz#6e40364d913f98b85a14f6678f92b5c1221f5290"
+  integrity sha1-bkA2TZE/mLhaFPZnj5K1wSIfUpA=
 
 source-list-map@^2.0.0:
   version "2.0.1"

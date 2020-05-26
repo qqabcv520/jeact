@@ -5,9 +5,9 @@
   <title>Title</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
   <link href="../dist/bundle.css" rel="stylesheet">
-  <link href="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.css?v=20200518" rel="stylesheet">
 </head>
 <body style="background-color: #f1f1f1">
+<<<<<<< HEAD
 <<<<<<< HEAD
 <input pm-selector ps-url="https://sales.banggood.cn/base/productManager/tree?roleId=3"
        ps-label-field="userName" ps-value-field="userId" ps-children-field="subordinateUserList" ps-placeholder="产品经理">
@@ -33,10 +33,16 @@
 <input id="category2" name="xxx"  value="7639">
 >>>>>>> ff93433... feat: 新增single-cascader组件
 </body>
+=======
 
+<input id="category1" name="xxx"  value="7639">
+>>>>>>> 2751e04... chore: 图片选择器
+
+<button class="btn btn-default" type="button" onclick="showModal()">弹窗</button>
+
+</body>
 <script src="../node_modules/jquery/dist/jquery.js"></script>
 <script src="../dist/bundle.js"></script>
-<script src="https://content.banggood.cn/Content/lib/scb-pm-selector/bundle.js?v=20200518"></script>
 <script>
 
 $('#category1').cascader({
@@ -46,19 +52,11 @@ $('#category1').cascader({
   childrenField: 'subCategoriesList',
   cacheName: 'categoryCascader',
 })
-$('#category2').singleCascader({
-  placeholder: '类目2',
-  valueField: 'categoryIdStr',
-  labelField: 'categoryName',
-  childrenField: 'subCategoriesList',
-  cacheName: 'categorySingleCascader',
-})
 
-$.ajax('https://apisp.banggood.cn/saleslister/category/get_limit_tree_list', {
+$.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list ', {
   success: function(res) {
     if (res && res.success) {
       $('#category1').cascader('options', res.result)
-      $('#category2').singleCascader('options', res.result)
     }
   },
   type: 'POST',
@@ -66,5 +64,13 @@ $.ajax('https://apisp.banggood.cn/saleslister/category/get_limit_tree_list', {
   data: JSON.stringify({ shopId: 8835 }),
   headers: { platformNo: 27 }
 });
+
+function showModal () {
+  var com = $.pictureSelector({
+
+  })
+  console.log(com);
+}
+
 </script>
 </html>

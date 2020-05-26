@@ -54,7 +54,7 @@ export function createVNode(tagName: string, props: { [key: string]: any } , ...
       return pre;
     }, {});
   }
-  const vNodeChildren = children.flat().map(value => {
+  const vNodeChildren = children.flat(2).map(value => {
     return isVElement(value) ? value : new VText(value);
   });
   return new VElement(tagName, attribute, handle, vNodeChildren);

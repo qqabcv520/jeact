@@ -89,7 +89,7 @@ export class Component {
 
 export abstract class ValueComponent<T> extends Component {
 
-  abstract writeValue(value: string);
+  abstract writeValue(value: string): void;
   readonly el: HTMLInputElement;
   protected valueChange: (options: T) => void;
 
@@ -103,7 +103,7 @@ export abstract class ValueComponent<T> extends Component {
     this.writeValue(this.el.value);
   }
 
-  readValue(value): string {
+  readValue(value: any): string {
     return value ? String(value) : '';
   }
 
