@@ -1,4 +1,4 @@
-import { VElement } from './v-node';
+import { VNode } from './v-node';
 import { DomOperate } from './dom';
 import { Differentiator } from './diff';
 
@@ -7,15 +7,17 @@ export interface Type<T> extends Function {
 }
 
 export interface ComponentProps {
-  el: HTMLElement;
+  el?: HTMLElement;
+  children?: VNode[];
+  rootUpdate: () => void;
 }
 
 export interface ValueComponentProps<T> extends ComponentProps {
   valueChange: (options: T) => void;
 }
 
-export class Component {
-  private vNode: VElement;
+export abstract class Component {
+  protected vNode: VNode;
   private updateFlag = false;
   protected readonly dom = new DomOperate(this);
   protected readonly diff = new Differentiator(this.dom);
@@ -24,21 +26,26 @@ export class Component {
     [key: string]: Element | Component;
   } = {};
 
-  protected constructor(args: ComponentProps) {
-    this.el = args.el;
+  readonly rootUpdate?: () => void;
+  children?: VNode[];
+
+  constructor(args: ComponentProps) {
+    if (args) {
+      Object.assign(this, args);
+    }
   }
 
   protected mount() {
     this.vNode = this.render();
-    const node = this.dom.createElement(this.vNode);
+    const node = this.dom.createElement(this.vNode, this.update.bind(this));
     this.appendToEl(node);
   }
 
-  appendToEl(node: HTMLElement) {
+  appendToEl(node: Node) {
     this.el && node && this.dom.appendChild(this.el, node);
   }
 
-  reappendToEl(oldNode: HTMLElement, newNode: HTMLElement) {
+  reappendToEl(oldNode: Node, newNode: Node) {
     if (oldNode == newNode || this.el == null) {
       return;
     }
@@ -51,32 +58,48 @@ export class Component {
   }
 
   update() {
-    if (!this.vNode) {
-      return;
-    }
+
     if (this.updateFlag) {
       return;
     }
     this.updateFlag = true;
     Promise.resolve().then(() => {
       this.updateFlag = false;
-      const newVNode = this.render();
-      this.diff.patch(this.vNode, newVNode);
-      this.reappendToEl(this.vNode.el, newVNode.el);
-      this.vNode = newVNode;
+      if (this.rootUpdate) {
+        this.rootUpdate();
+        return;
+      }
+      this.runDiff();
     })
   }
 
-  beforeMount() {}
-
-  mounted() {}
-
-  render(): VElement {
-    return null;
+  runDiff() {
+    if (this.vNode == null || this.vNode.el == null) {
+      return null;
+    }
+    const newVNode = this.render();
+    this.diff.patch(this.vNode, newVNode, this.update.bind(this));
+    this.reappendToEl(this.vNode.el, newVNode.el);
+    this.vNode = newVNode;
+    return newVNode;
   }
 
+  beforeMount() {};
 
-  static create<T extends Component>(componentType: Type<T>, props: any, el?: HTMLElement): T {
+  mounted() {};
+
+  beforeUpdate() {};
+
+  updated() {};
+
+  destroy() {};
+
+  render(): VNode {
+    return null;
+  };
+
+
+  static create<T extends Component>(componentType: Type<T>, props: Partial<T>, el?: HTMLElement): T {
     const component = new componentType({...props, el});
     component.beforeMount();
     component.mount();
@@ -100,7 +123,9 @@ export abstract class ValueComponent<T> extends Component {
 
   mount() {
     super.mount();
-    this.writeValue(this.el.value);
+    if (this.el) {
+      this.writeValue(this.el.value);
+    }
   }
 
   readValue(value: any): string {
@@ -122,6 +147,18 @@ export abstract class ValueComponent<T> extends Component {
     }
   }
 
+}
+
+
+
+export class FunctionComponent<T> extends Component {
+
+  functionProps: T;
+  renderFunction: (T) => VNode;
+
+  render(): VNode {
+    return this.renderFunction(this.functionProps);
+  }
 }
 
 

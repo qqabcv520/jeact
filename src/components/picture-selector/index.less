@@ -11,23 +11,52 @@
   width: 1000px;
   background-color: #fff;
 
-  .bgx-pic-selected-images {
-    height: 160px;
-    padding: 8px 0 8px 8px;
-    overflow-y: scroll;
-    display: flex;
-  }
+  .bgx-pic-selected {
+    &-images {
+      height: 160px;
+      padding: 8px 0 8px 8px;
+      overflow-y: scroll;
+      display: flex;
+    }
+    &-operation {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      opacity: 0;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: opacity 0.2s;
+      &:hover {
+        opacity: 1;
+      }
+    }
+    &-icon {
+      color: #fff;
+      cursor: pointer;
+      line-height: 142px;
+    }
+    &-close {
+      cursor: pointer;
+      position: absolute;
+      right: -5px;
+      top: -8px;
+      color: #ff4d4d;
+    }
 
-  .bgx-pic-selected-option-wrapper {
-    width: 144px;
-    height: 144px;
-    border: 1px solid #ddd;
-    margin-right: 8px;
-  }
+    &-option-wrapper {
+      width: 144px;
+      height: 144px;
+      border: 1px solid #ddd;
+      margin-right: 8px;
+      position: relative;
+    }
 
-  .bgx-pic-selected-img {
-    width: 100%;
-    height: 100%;
+    &-img {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .bgx-pic-selector-content {
@@ -91,12 +120,12 @@
         background-color: rgba(0, 0, 0, 0.5);
         opacity: 0;
       }
-      &-selected-icon {
+      &-icon {
         color: #fff;
         font-size: 18px;
         position: absolute;
-        right: 8px;
-        top: 8px;
+        right: 1px;
+        top: 0;
       }
       &:hover {
         .bgx-pic-images-option-img {

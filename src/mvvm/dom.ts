@@ -1,5 +1,5 @@
-import { isVElement, isVText, VElement, VNode, VText } from './v-node';
-import { Component } from './component';
+import { isVComponent, isVDom, isVFunction, isVText, VDom, VNode, VText } from './v-node';
+import { Component, FunctionComponent } from './component';
 
 export class DomOperate {
 
@@ -7,12 +7,33 @@ export class DomOperate {
 
   }
 
-  createElement(vNode: VText): Text;
-  createElement(vNode: VElement): HTMLElement;
-  createElement(vNode: VNode): Node
-  createElement(vNode: VNode): any {
-    if (isVElement(vNode)) {
-      const el: HTMLElement = document.createElement(vNode.tagName);
+  createElement(vNode: VText, rootUpdate: () => void): Text;
+  createElement(vNode: VDom, rootUpdate: () => void): HTMLElement;
+  createElement(vNode: VNode, rootUpdate: () => void): Node
+  createElement(vNode: VNode, rootUpdate: () => void): any {
+    if (isVComponent(vNode)) {
+      vNode.component = Component.create(vNode.type, {
+        ...vNode.attributes,
+        ...vNode.handles,
+        children: vNode.children,
+        rootUpdate,
+      });
+      vNode.el = vNode.component['vNode'].el;
+      return vNode.el;
+    } else if(isVFunction(vNode)) {
+      vNode.component = Component.create(FunctionComponent, {
+        renderFunction: vNode.type,
+        functionProps: {
+          ...vNode.attributes,
+          ...vNode.handles,
+          children: vNode.children,
+        },
+        rootUpdate,
+      });
+      vNode.el = vNode.component['vNode'].el;
+      return vNode.el;
+    } else if(isVDom(vNode)) {
+      const el: HTMLElement = document.createElement(vNode.type);
       vNode.el = el;
       Object.keys(vNode.handles).forEach(key => {
         const value = vNode.handles[key];
@@ -24,7 +45,7 @@ export class DomOperate {
         this.setAttribute(el, key, value);
       });
       vNode.children && vNode.children.forEach(value => {
-        el.appendChild( this.createElement(value));
+        el.appendChild( this.createElement(value, rootUpdate));
       });
       return el;
     } else if (isVText(vNode)) {
@@ -33,8 +54,14 @@ export class DomOperate {
     }
   }
 
-  updateElement(el: Node, newVNode: VNode, oldVNode: VNode) {
-    if (isVElement(newVNode) && isVElement(oldVNode) && el instanceof HTMLElement) {
+  /**
+   *
+   * @param el VNode对应的真是dom
+   * @param newVNode
+   * @param oldVNode
+   */
+  updateVDom(el: Node, newVNode: VDom, oldVNode: VDom) {
+    if (isVDom(newVNode) && isVDom(oldVNode) && el instanceof HTMLElement) {
       Object.keys(oldVNode.handles).forEach(key => {
         if (!newVNode.handles.hasOwnProperty(key)) {
           const value = oldVNode.handles[key];
@@ -71,6 +98,12 @@ export class DomOperate {
         }
       });
     } else if (isVText(newVNode) && isVText(oldVNode) && newVNode.content != oldVNode.content) {
+      newVNode.el.data = newVNode.content;
+    }
+  }
+
+  updateVText(el: Node, newVNode: VText, oldVNode: VText) {
+    if (newVNode.content != oldVNode.content) {
       newVNode.el.data = newVNode.content;
     }
   }
@@ -141,7 +174,9 @@ export class DomOperate {
 
 
   removeVNode(vNode: VNode) {
-    // todo 调用销毁hook
+    if (isVComponent(vNode) || isVFunction(vNode)) {
+      vNode.component.destroy();
+    }
     const pNode = this.parentNode(vNode.el);
     pNode && this.removeChild(pNode, vNode.el);
   }

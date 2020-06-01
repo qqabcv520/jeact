@@ -4,6 +4,7 @@ import './index.less'
 import { mountModal } from '../../utils';
 import classname from 'classname';
 import Sortable from 'sortablejs';
+import { ModalComponent } from '../modal';
 
 
 // $.pictureSelector({
@@ -48,13 +49,7 @@ export class PictureSelectorComponent extends Component {
   poaList: { value: string, label: string }[] = [{value: 'POA123456', label: 'POA123456'}];
   pics: string[];
 
-  get selectedImg(): ImageInfo[] {
-    return this._selectedImg;
-  }
-  set selectedImg(value: ImageInfo[]) {
-    this._selectedImg = value || [];
-  }
-  private _selectedImg: ImageInfo[] = [];
+  private selectedImg: ImageInfo[] = [];
 
 
   get displayImgs(): ImageInfo[] {
@@ -93,8 +88,6 @@ export class PictureSelectorComponent extends Component {
 
   constructor(args) {
     super(args);
-
-    this.pics = args.pics;
   }
 
   mounted() {
@@ -103,22 +96,23 @@ export class PictureSelectorComponent extends Component {
     const wrapper = this.refs.sortWrapper as HTMLElement;
     new Sortable(wrapper, {
       animation: 150,
-      setData(dataTransfer) {
-        dataTransfer
+      onUpdate: (event) => {
+        const item = this.selectedImg.splice(event.oldIndex, 1)[0];
+        this.selectedImg.splice(event.newIndex, 0, item);
       }
     });
   }
 
   selectAll = e => {
-    const num = this.bgxMaxImageNum - this._selectedImg.length;
+    const num = this.bgxMaxImageNum - this.selectedImg.length;
     const unselectedImg = this.displayImgs.filter(value => !this.isSelected(value));
     const newImgs = unselectedImg.slice(0, num);
-    this._selectedImg = this._selectedImg.concat(newImgs);
+    this.selectedImg = this.selectedImg.concat(newImgs);
     this.update();
   };
 
   isSelected = (item: ImageInfo) => {
-    return this._selectedImg && this._selectedImg.some(val => val.mainImgUrl === (item && item.mainImgUrl));
+    return this.selectedImg && this.selectedImg.some(val => val.mainImgUrl === (item && item.mainImgUrl));
   }
 
   private clickImg(item: ImageInfo) {
@@ -132,18 +126,35 @@ export class PictureSelectorComponent extends Component {
 
 
   selectImg(item: ImageInfo) {
-    console.log(this);
-    if (this._selectedImg.length >= this.bgxMaxImageNum) {
+    if (this.selectedImg.length >= this.bgxMaxImageNum) {
       // this.msg.info(`最多选择${this.bgxMaxImageNum}张图片！`);
       return;
     }
-    this._selectedImg = [...this._selectedImg, item];
+    this.selectedImg = [...this.selectedImg, item];
   }
 
   removeImg(item: ImageInfo) {
-    const index = this._selectedImg.findIndex(val => val.mainImgUrl === item.mainImgUrl);
-    this._selectedImg.splice(index, 1);
-    this._selectedImg = [...this._selectedImg];
+    const index = this.selectedImg.findIndex(val => val.mainImgUrl === item.mainImgUrl);
+    this.selectedImg.splice(index, 1);
+    this.selectedImg = [...this.selectedImg];
+    this.update();
+  }
+
+  preview(item: ImageInfo) {
+    console.log(item);
+    Component.create(ModalComponent, {
+      title: '预览图片',
+      content: () => {
+        return (
+          <div style="background: #fff; min-height: 600px;">
+            <img src={item.mainImgUrl} alt="" style="width: 100%"/>
+          </div>
+        )
+      },
+      maskCloseable: true,
+      style: 'width: 1000px;',
+    }, document.body);
+    this.update();
   }
 
   private codeChange(value: any) {
@@ -153,10 +164,10 @@ export class PictureSelectorComponent extends Component {
         this.imageList = await this.getImageInfos(res.result)
       },
       type: 'POST',
-      contentType: "application/json",
+      contentType: 'application/json',
       data: JSON.stringify({
-        "platformNo": 0,
-        "skuOrPoa": value
+        platformNo: 0,
+        skuOrPoa: value
       }),
     });
   }
@@ -165,24 +176,47 @@ export class PictureSelectorComponent extends Component {
 
   render() {
 
+    const SelectedImg = ({item}: {item: ImageInfo}) => {
+      return (
+        <div class="bgx-pic-selected-option-wrapper" >
+          <img src={item.mainImgUrl} class="bgx-pic-selected-img"/>
+          <div class="bgx-pic-selected-operation">
+            <i class="topsales tps-status-error bgx-pic-selected-close" onclick={() => this.removeImg(item)} title="取消选择" />
+            <i class="topsales tps-icon-See bgx-pic-selected-icon" onclick={() => this.preview(item)} title="查看大图" />
+          </div>
+        </div>
+      )
+    }
+
+    const DisplayImg = ({item}: {item: ImageInfo}) => {
+      return (
+        <div onclick={() => this.clickImg(item)}
+             class={classname(['bgx-pic-images-option', {'bgx-pic-images-option-selected': this.isSelected(item)}])}>
+          <div class="bgx-pic-images-option-wrapper" contextmenu="contextMenu($event, menu, index)">
+            <img src={item.mainImgUrl} class="bgx-pic-images-option-img"/>
+            <div class="bgx-pic-images-option-mask" >
+              <i class={'topsales tps-status-correct bgx-pic-images-option-icon'} />
+            </div>
+          </div>
+          <div>
+            <span>{item.width + '*' + item.height + ' ' + item.type}</span>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div class="bgx-picture-selector">
         <div class="bgx-pic-selected-images" ref="sortWrapper">
-          {
-            this.selectedImg.map(item => (
-              <div class="bgx-pic-selected-option-wrapper" >
-                <img src={item.mainImgUrl} class="bgx-pic-selected-img"/>
-              </div>
-            ))
-          }
+          { this.selectedImg.map(item => <SelectedImg item={item}/>) }
         </div>
         <div class="bgx-pic-selector-content">
           <div class="bgx-pic-toolbar">
             <input class="form-control bgx-pic-toolbar-input" placeholder="搜索SKU/POA" value={this.code}
-                     onChange={e => this.codeChange(e.target.value)}/>
+                   onChange={e => this.codeChange(e.target.value)}/>
             <select class="form-control bgx-pic-toolbar-input" ngModel="poaFilter" placeholder="过滤POA图片"
                     ngModelChange="loadImage($event)">
-              {this.poaList.map(value => <option  value={value.value}>{value.label}</option>)}
+              {this.poaList.map(value => <option value={value.value}>{value.label}</option>)}
             </select>
             <select class="form-control bgx-pic-toolbar-input" ngModel="poaFilter" placeholder="图片类型"
                     ngModelChange="loadImage($event)">
@@ -196,24 +230,7 @@ export class PictureSelectorComponent extends Component {
             <button class="btn btn-default toolbar-select-all" onclick={this.selectAll}>全选</button>
           </div>
           <div class="bgx-pic-images">
-            {
-              this.displayImgs.map(item => {
-                return (
-                  <div onclick={() => this.clickImg(item)}
-                       class={classname(['bgx-pic-images-option', {'bgx-pic-images-option-selected': this.isSelected(item)}])}>
-                    <div class="bgx-pic-images-option-wrapper" contextmenu="contextMenu($event, menu, index)">
-                      <img src={item.mainImgUrl} class="bgx-pic-images-option-img"/>
-                      <div class="bgx-pic-images-option-mask" >
-                        <i class="bgx-pic-images-option-selected-icon">√</i>
-                      </div>
-                    </div>
-                    <div>
-                      <span>{item.width + '*' + item.height + ' ' + item.type}</span>
-                    </div>
-                  </div>
-                );
-              })
-            }
+            { this.displayImgs.map(item => <DisplayImg item={item}/>) }
           </div>
         </div>
       </div>
@@ -225,8 +242,7 @@ export class PictureSelectorComponent extends Component {
 // 挂载为jquery插件
 mountModal({
   name: 'pictureSelector',
-  componentType: PictureSelectorComponent,
-  props: {
-    width: '1000px',
-  }
+  title: '图片选择',
+  content: PictureSelectorComponent,
+  style: 'width: 1000px;',
 });

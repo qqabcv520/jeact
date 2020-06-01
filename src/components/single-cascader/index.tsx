@@ -78,13 +78,6 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
 
   constructor(args: SingleCascaderComponentProps) {
     super(args);
-    this.placeholder = args.placeholder;
-    this.valueField = args.valueField || 'value';
-    this.labelField = args.labelField || 'label';
-    this.childrenField = args.childrenField || 'children';
-    this.cacheName = args.cacheName;
-    this.value = args.value;
-    this.options = args.options;
   }
 
   writeValue(value: string) {

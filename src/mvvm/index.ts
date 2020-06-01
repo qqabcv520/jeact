@@ -9,5 +9,4 @@
 
 
 export { Component, ValueComponent, Type } from './component';
-export { VNode, VElement, VText } from './v-node';
-
+export { VNode, VDom, VText } from './v-node';

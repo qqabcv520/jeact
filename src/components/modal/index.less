@@ -1,0 +1,42 @@
+
+.bgx-modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: scroll;
+  background-color: rgba(0,0,0,0.4);
+  z-index: 1000;
+  &-wrapper {
+    margin: 40px auto;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 1000px;
+  }
+  &-title {
+    background-color: #fff;
+    padding: 8px;
+    border-bottom: 1px #eee solid;
+  }
+  &-close {
+    float: right;
+    cursor: pointer;
+  }
+  &-mask {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  &-buttons{
+    height: 50px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    & > * {
+      margin-right: 8px;
+    }
+  }
+}

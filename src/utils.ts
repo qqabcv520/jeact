@@ -1,5 +1,6 @@
 import { Component, Type } from './mvvm';
 import JQuery from 'jquery';
+import { ModalComponent } from '.';
 
 // 判空
 export function isEmpty(value: any) {
@@ -66,68 +67,23 @@ export function mountComponent ({name, componentType, props, $ = JQuery}: mountC
 
 }
 
-export interface MountModalArgs {
+export interface MountModalArgs<T extends Component> extends Partial<ModalComponent<T>>{
   name: string;
-  componentType: Type<Component>;
-  props?: {
-    width?: string;
-    maskCloseable?: boolean;
-  };
+  title: string
   $?: JQueryStatic;
 }
 
-export function mountModal(args: MountModalArgs) {
+export function mountModal<T extends Component>(args: MountModalArgs<T>) {
   const {
     name,
-    componentType,
-    props = {},
     $ = JQuery,
+    ...restProp
   } = args;
-  $[name] = function(modalProps) {
-
-    const mask = document.createElement('div');
-    mask.style.position = 'fixed';
-    mask.style.top = '0';
-    mask.style.bottom = '0';
-    mask.style.width = '100%';
-
-    const modal = document.createElement('div');
-    modal.style.width = props.width;
-    modal.style.margin = '40px auto';
-    modal.style.borderRadius = '4px';
-    modal.style.overflow = 'hidden';
-
-    const $title = $(`
-      <div style="padding: 8px;background-color: #fff;border-bottom: 1px solid #ddd;">
-        <span>标题</span>
-      </div>
-    `);
-    const $close = $('<span style="float: right; cursor: pointer">x</span>');
-    $close.on('click', () => {
-      destroy();
-    });
-    $title.append($close);
-    const content = document.createElement('div');
-
-    $(modal).append($title);
-    $(modal).append(content);
-    $(mask).append(modal);
-
-    if (props.maskCloseable) {
-      $(mask).on('click', e => {
-        if (e.target === mask) {
-          destroy();
-        }
-      });
-    }
-
-    function destroy() {
-      $(mask).remove();
-    }
-    $(document.body).append(mask);
-    return Component.create(componentType, props, content);
+  $[name] = function(contentProps: Partial<T>) {
+    return Component.create<ModalComponent<T>>(ModalComponent, {
+      ...restProp,
+      ...contentProps,
+    }, document.body);
   }
-
-
 
 }

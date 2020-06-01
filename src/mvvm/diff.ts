@@ -1,8 +1,6 @@
-import { VNode, VElement, isVText, isVElement } from './v-node';
+import { isVComponent, isVDom, isVElement, isVFunction, isVText, VElement, VNode } from './v-node';
 import { isEmpty } from '../utils';
 import { DomOperate } from './dom';
-
-
 
 
 export class Differentiator {
@@ -20,7 +18,7 @@ export class Differentiator {
    * @param b
    */
   sameInputType (a: VElement, b: VElement) {
-    if (a.tagName !== 'input') {
+    if (a.type !== 'input') {
       return true;
     }
     const aType = a.attributes.type;
@@ -37,12 +35,15 @@ export class Differentiator {
    * @param b
    */
   sameVNode(a: VNode, b: VNode) {
-    if (isVElement(a) && isVElement(b)) {
+    if (isVDom(a) && isVDom(b)) {
       return (
         a.key === b.key &&
-        a.tagName === b.tagName &&
+        a.type === b.type &&
         this.sameInputType(a, b) //  当标签是<input>的时候，type必须相同
       );
+    }
+    if (isVElement(a) && isVElement(b) && a.type === b.type) {
+      return true;
     }
     return !!(isVText(a) && isVText(b));
   }
@@ -75,7 +76,7 @@ export class Differentiator {
     return null;
   }
 
-  updateChildren(parentEl: Node, oldChildren: VNode[], newChildren: VNode[]) {
+  updateChildren(parentEl: Node, oldChildren: VNode[], newChildren: VNode[], rootUpdate?: () => void) {
     let oldStartIdx = 0;
     let oldStartVNode = oldChildren[0];
     let newStartIdx = 0;
@@ -118,12 +119,11 @@ export class Differentiator {
           oldKeyToIdx = this.createIndexMap(oldChildren, oldStartIdx, oldEndIdx);
         }
         // 根据新vNode的key在oldVNode中寻找符合条件的
-        // idxInOld = oldKeyToIdx.get(newStartVNode.key);
         idxInOld = newStartVNode.key != null
           ? oldKeyToIdx.get(newStartVNode.key)
           : this.findVNodeIndex(oldChildren, newStartVNode, oldStartIdx, oldEndIdx);
         if (idxInOld == null) { // New element
-          newStartVNode.el = this.dom.createElement(newStartVNode);
+          newStartVNode.el = this.dom.createElement(newStartVNode, rootUpdate);
           this.dom.insertBefore(parentEl, newStartVNode.el, oldStartVNode.el);
         } else {
           vNodeToMove = oldChildren[idxInOld];
@@ -133,7 +133,7 @@ export class Differentiator {
             this.dom.insertBefore(parentEl, vNodeToMove.el, oldStartVNode.el);
           } else {
             // key相同但是element不同
-            newStartVNode.el = this.dom.createElement(newStartVNode);
+            newStartVNode.el = this.dom.createElement(newStartVNode, rootUpdate);
             this.dom.insertBefore(parentEl, newStartVNode.el, oldStartVNode.el);
           }
         }
@@ -142,9 +142,9 @@ export class Differentiator {
     }
     if (oldStartIdx > oldEndIdx) {
       const ref = newChildren[newEndIdx + 1];
-      const refEl = isVElement(ref) ? ref.el : null;
+      const refEl = isVDom(ref) ? ref.el : null;
       for (; newStartIdx <= newEndIdx; newStartIdx++) {
-        const el = this.dom.createElement(newChildren[newStartIdx]);
+        const el = this.dom.createElement(newChildren[newStartIdx], rootUpdate);
         newChildren[newStartIdx].el = el;
         this.dom.insertBefore(parentEl, el, refEl);
       }
@@ -158,41 +158,55 @@ export class Differentiator {
 
 
   /**
-   * 把newVNode的值同步到oldVNode
+   * 对类型相同的的两个node同步
    * @param oldVNode
    * @param newVNode
+   * @param rootUpdate
    */
+  patchVNode(oldVNode: VNode, newVNode: VNode, rootUpdate?: () => void) {
 
-  patchVNode(oldVNode: VNode, newVNode: VNode) {
     let el = newVNode.el = oldVNode.el;
     if (oldVNode === newVNode) {
       return;
     }
-    this.dom.updateElement(el, newVNode, oldVNode);
     if (isVText(oldVNode) && isVText(newVNode)) {
+      this.dom.updateVText(el, newVNode, oldVNode);
       return;
     }
-    if (isVElement(oldVNode) && isVElement(newVNode)) {
+    if (isVDom(oldVNode) && isVDom(newVNode)) {
+      this.dom.updateVDom(el, newVNode, oldVNode);
       const oldChildren = oldVNode.children;
       const newChildren = newVNode.children;
       if (!isEmpty(oldChildren) && !isEmpty(newChildren) && oldChildren !== newChildren) {
-        this.updateChildren(el, oldChildren, newChildren);
+        this.updateChildren(el, oldChildren, newChildren, rootUpdate);
       } else if (!isEmpty(newChildren)) {
-        newChildren.forEach(value => this.dom.appendChild(el, this.dom.createElement(value)))
+        newChildren.forEach(value => this.dom.appendChild(el, this.dom.createElement(value, rootUpdate)))
       } else if (!isEmpty(oldChildren)) {
         this.dom.removeChildren(el);
       }
+      return;
+    }
+    if (isVComponent(oldVNode) && isVComponent(newVNode)) {
+      newVNode.component = oldVNode.component;
+      const v = oldVNode.component.runDiff();
+      oldVNode.el = v && v.el;
+      return;
+    }
+    if (isVFunction(oldVNode) && isVFunction(newVNode)) {
+      newVNode.component = oldVNode.component;
+      const v = oldVNode.component.runDiff();
+      oldVNode.el = v && v.el;
+      return;
     }
   }
 
-
-  patch(oldVNode: VElement, newVNode: VElement) {
+  patch(oldVNode: VNode, newVNode: VNode, rootUpdate: () => void) {
     if (this.sameVNode(oldVNode, newVNode)) {
       this.patchVNode(oldVNode, newVNode);
     } else {
       const oldEl = oldVNode.el; // 当前oldVnode对应的真实元素节点
       let parentEl = oldEl.parentNode;  // 父元素
-      newVNode.el = this.dom.createElement(newVNode);  // 根据Vnode生成新元素
+      newVNode.el = this.dom.createElement(newVNode, rootUpdate);  // 根据Vnode生成新元素
       this.dom.insertBefore(parentEl, newVNode.el, oldEl);
       this.dom.removeChild(parentEl, oldEl); // 将新元素添加进父元素
     }
