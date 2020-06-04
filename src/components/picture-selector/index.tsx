@@ -153,6 +153,7 @@ export class PictureSelectorComponent extends Component {
       },
       maskCloseable: true,
       style: 'width: 1000px;',
+      buttons: null,
     }, document.body);
     this.update();
   }

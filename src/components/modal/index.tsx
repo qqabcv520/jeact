@@ -33,12 +33,22 @@ export class ModalComponent<T extends Component> extends Component {
     }
   }
 
+  readonly cancelClick = () => {
+    this.close();
+  };
+
   readonly closeClick = () => {
+    this.close();
+  }
+
+  close() {
     this.dom.removeChild(this.el, this.vNode.el);
+    if (this.onCancel) {
+      this.onCancel();
+    }
   }
 
   render() {
-
     const Title = () => {
       if (typeof this.title  === 'string') {
         return  (
@@ -50,20 +60,16 @@ export class ModalComponent<T extends Component> extends Component {
       } else if(isVNode(this.title)) {
         return this.title;
       }
-      return <div/>
     };
     const Content = this.content;
-    if (Content == null) {
-      debugger
-    }
     const Buttons = () => {
-      return (
+      return this.buttons !== undefined ? this.buttons : (
         <div class="bgx-modal-buttons">
-          <button class="btn btn-default" type="button" onclick={this.onCancel}>取消</button>
+          <button class="btn btn-default" type="button" onclick={this.cancelClick}>取消</button>
           <button class="btn btn-primary" type="button" onclick={this.onOk}>确定</button>
         </div>
       );
-    };
+    }
     return (
       <div ref="modal" class="bgx-modal" onclick={this.maskClick}>
         <div class="bgx-modal-wrapper" style={this.style}>

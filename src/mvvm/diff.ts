@@ -151,7 +151,9 @@ export class Differentiator {
     } else if (newStartIdx > newEndIdx) {
       for (; oldStartIdx <= oldEndIdx; ++oldStartIdx) {
         const child = oldChildren[oldStartIdx];
-        this.dom.removeVNode(child);
+        if (child != null) {
+          this.dom.removeVNode(child);
+        }
       }
     }
   }

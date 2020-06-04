@@ -1,4 +1,4 @@
-import { isVComponent, isVDom, isVFunction, isVText, VDom, VNode, VText } from './v-node';
+import { isVComponent, isVDom, isVElement, isVFunction, isVText, VDom, VNode, VText } from './v-node';
 import { Component, FunctionComponent } from './component';
 
 export class DomOperate {
@@ -18,7 +18,7 @@ export class DomOperate {
         children: vNode.children,
         rootUpdate,
       });
-      vNode.el = vNode.component['vNode'].el;
+      vNode.el = vNode.component.vNode?.el;
       return vNode.el;
     } else if(isVFunction(vNode)) {
       vNode.component = Component.create(FunctionComponent, {
@@ -30,7 +30,7 @@ export class DomOperate {
         },
         rootUpdate,
       });
-      vNode.el = vNode.component['vNode'].el;
+      vNode.el = vNode.component.vNode?.el;
       return vNode.el;
     } else if(isVDom(vNode)) {
       const el: HTMLElement = document.createElement(vNode.type);
@@ -45,7 +45,10 @@ export class DomOperate {
         this.setAttribute(el, key, value);
       });
       vNode.children && vNode.children.forEach(value => {
-        el.appendChild( this.createElement(value, rootUpdate));
+        const node = this.createElement(value, rootUpdate);
+        if (node) {
+          el.appendChild(node);
+        }
       });
       return el;
     } else if (isVText(vNode)) {
@@ -175,10 +178,25 @@ export class DomOperate {
 
   removeVNode(vNode: VNode) {
     if (isVComponent(vNode) || isVFunction(vNode)) {
-      vNode.component.destroy();
+      this.callDestroy(vNode);
     }
     const pNode = this.parentNode(vNode.el);
     pNode && this.removeChild(pNode, vNode.el);
+  }
+
+  // 递归销毁所有子节点
+  callDestroy (vnode: VNode) {
+    if (isVElement(vnode)) {
+      for (let i = 0; i < vnode.children.length; ++i) {
+        this.callDestroy(vnode.children[i])
+      }
+    }
+    if (isVComponent(vnode)) {
+      if (vnode.component?.vNode) {
+        this.callDestroy(vnode.component?.vNode);
+        vnode.component.destroy();
+      }
+    }
   }
 
 }

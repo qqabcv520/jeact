@@ -17,7 +17,6 @@ export interface ValueComponentProps<T> extends ComponentProps {
 }
 
 export abstract class Component {
-  protected vNode: VNode;
   private updateFlag = false;
   protected readonly dom = new DomOperate(this);
   protected readonly diff = new Differentiator(this.dom);
@@ -28,6 +27,7 @@ export abstract class Component {
 
   readonly rootUpdate?: () => void;
   children?: VNode[];
+  vNode: VNode | null;
 
   constructor(args: ComponentProps) {
     if (args) {
@@ -94,7 +94,7 @@ export abstract class Component {
 
   destroy() {};
 
-  render(): VNode {
+  render(): VNode | null {
     return null;
   };
 

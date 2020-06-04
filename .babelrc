@@ -6,7 +6,6 @@
                 "useBuiltIns": "usage",
                 "corejs": "3",
                 "targets": [
-                    "> 5% in CN",
                     "Firefox > 50",
                     "Chrome > 60"
                 ]
