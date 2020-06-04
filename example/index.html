@@ -32,6 +32,7 @@
 >>>>>>> 10834be... chore: 输出模块改为umd
 <input id="category1" name="xxx"  value="7639">
 <input id="category2" name="xxx"  value="7639">
+<<<<<<< HEAD
 >>>>>>> ff93433... feat: 新增single-cascader组件
 </body>
 =======
@@ -39,6 +40,8 @@
 <input id="category1" name="xxx"  value="7639">
 >>>>>>> 2751e04... chore: 图片选择器
 
+=======
+>>>>>>> c08d761... feat: 级联组件优化
 <button class="btn btn-default" type="button" onclick="showModal()">弹窗</button>
 
 </body>
@@ -53,11 +56,18 @@ $('#category1').cascader({
   childrenField: 'subCategoriesList',
   cacheName: 'categoryCascader',
 })
-
+$('#category2').singleCascader({
+  placeholder: '类目2',
+  valueField: 'categoryIdStr',
+  labelField: 'categoryName',
+  childrenField: 'subCategoriesList',
+  cacheName: 'categorySingleCascader',
+})
 $.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list ', {
   success: function(res) {
     if (res && res.success) {
       $('#category1').cascader('options', res.result)
+      $('#category2').singleCascader('options', res.result)
     }
   },
   type: 'POST',

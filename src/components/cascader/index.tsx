@@ -159,9 +159,9 @@ export class CascaderComponent extends ValueComponent<any[]> {
   };
 
   searchChange = (e: Event) => {
-    this.searchText = e.target['value'];
+    this.searchText = e.target['value'] || '';
     this.searchOptions =  this.leafOptions.filter(value => {
-      return value.label && value.label.includes(this.searchText);
+      return value.label && value.label.toLowerCase().includes(this.searchText.toLowerCase());
     });
     this.checkSearchOption();
     this.update();
@@ -305,7 +305,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
                   { this.searchOptions.map(value =>
                     <label key={value.value} class="bgx-label bgx-search-option">
                       <input class="bgx-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
-                      <span dangerouslySetInnerHTML={value.label.replace(this.searchText, str => str.fontcolor("#1481db"))}>
+                      <span dangerouslySetInnerHTML={value.label.replace(RegExp(this.searchText, 'ig'), str => str.fontcolor("#1481db"))}>
                       </span>
                     </label>
                   )}

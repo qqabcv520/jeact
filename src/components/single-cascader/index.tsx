@@ -50,12 +50,13 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   readonly saveCommonMax = 10;
   open = false;
   commonOptions: SingleCascaderOption[] = [];
+  showCommon = true;
   selectedIndexes: number[] = [];
   selectedString = '';
   leafOptions: SingleCascaderOption[] = [];
   searchText = '';
-  searchOptions: SingleCascaderOption[] = [];
-  showSearch = true;
+  searchOptions: any[] = [];
+  showSearch = false;
 
   get columns(): SingleCascaderOption[][] {
     let list = this.convertedOptions;
@@ -182,13 +183,65 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     this.onChange([]);
   };
 
-  searchChange = (e: Event) => {
-    this.searchText = e.target['value'];
-    this.searchOptions =  this.leafOptions.filter(value => {
-      return value.label && value.label.includes(this.searchText);
+  clickSearch =(options: SingleCascaderOption) => {
+    this.selectOption(options);
+    this.showSearch = false;
+    this.update();
+  }
+
+  searchChange = () => {
+    if (!this.searchText) {
+      this.searchOptions = [];
+      return;
+    }
+    debugger
+    const searchedOptionsLinked = this.searchChildren(this.convertedOptions, this.searchText);
+    this.searchOptions = searchedOptionsLinked.map(value => {
+      const text = value.map(value1 => value1.label).join(' > ');
+      return {
+        text,
+        html: text.replace(RegExp(this.searchText, 'ig'), str => str.fontcolor('red')),
+        ids: value.map(value1 => value1.value),
+        originOption: value[value.length - 1]
+      };
     });
+    this.showSearch = true;
     this.update();
   };
+
+  // 递归搜索children
+  searchChildren(options: SingleCascaderOption[], searchText: string): SingleCascaderOption[][] {
+    if (!options ) {
+      return [];
+    }
+    const lowerCaseSearchText = searchText.toLowerCase();
+    const searchedOptions = options.filter(value => (value.label || '').toLowerCase().includes(lowerCaseSearchText));
+    const childrenOptionsLinked = this.leafChildrenLinked(searchedOptions);
+
+    const notSearchedOptions = options.filter(value => !(value.label || '').toLowerCase().includes(lowerCaseSearchText));
+    const searchedOptionsLinked = notSearchedOptions
+        .filter(value => !this.isLeaf(value))
+        .flatMap(value => {
+          return this.searchChildren(value.children, searchText).map(value1 => [value, ...value1]);
+        });
+    return [...searchedOptionsLinked, ...childrenOptionsLinked];
+  }
+
+  // options到叶子节点的数组的数组
+  leafChildrenLinked(options: SingleCascaderOption[]): SingleCascaderOption[][]  {
+    if (!options) {
+      return [];
+    }
+    const leafLinked = options
+        .filter(value => this.isLeaf(value))
+        .map(value => [value]);
+    const childrenLeafLinked = options
+        .filter(value => !this.isLeaf(value))
+        .flatMap(value => { // 所有子节点和当前节点，拼成链
+          return this.leafChildrenLinked(value.children).map(value1 => [value, ...value1]);
+        });
+    return [...leafLinked, ...childrenLeafLinked];
+  }
 
   // 关闭搜索弹窗
   closeSearchPopup() {
@@ -272,17 +325,22 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
         {/*搜索栏*/}
         <div class="bgx-search-bar">
           <div class="bgx-search-input" ref="search">
-            <input type="text" class="form-control input-sm" value={this.searchText} oninput={this.searchChange} onfocus={this.openSearchPopup} placeholder="请输入搜索关键字"/>
-            {this.searchText && this.showSearch && (<div class="bgx-search-popup" >
-                <div class="bgx-label bgx-search-options">
+            <div class="input-group">
+              <input type="text" class="form-control input-sm" value={this.searchText} oninput={(e) => this.searchText = e.target['value']} placeholder="请输入搜索关键字"/>
+              <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" type="button" onclick={this.searchChange}>搜索</button>
+              </span>
+            </div>
+            {this.searchText && this.showSearch && this.searchOptions.length > 1 && (<div class="bgx-search-popup" >
+                <div class="bgx-search-options">
                   { this.searchOptions.map(value =>
-                    <label key={value.value} class={[
-                      'bgx-label bgx-search-option',
-                      this.selectedOptions.includes(value) ? 'bgx-option-selected' : ''
-                    ].join(' ')} onclick={() => this.selectOption(value)}>
-                      <span dangerouslySetInnerHTML={value.label.replace(this.searchText, str => str.fontcolor("#1481db"))}>
+                    <div key={value.ids} class={[
+                      'bgx-search-option',
+                      this.selectedOptions.includes(value.originOption) ? 'bgx-option-selected' : ''
+                    ].join(' ')} onclick={() => this.clickSearch(value.originOption)}>
+                      <span dangerouslySetInnerHTML={value.html}>
                       </span>
-                    </label>
+                    </div>
                   )}
                 </div>
             </div>)}
@@ -291,11 +349,12 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
         </div>
         {/*常用选择*/}
         <div class="bgx-commonly-used">
-          <label class="bgx-label">
-            常用选择
-          </label>
+          <div class="bgx-commonly-used-head">
+            <label>常用选择</label>
+            <i onclick={() => this.showCommon = !this.showCommon}>{ this.showCommon ? '-' : '+'}</i>
+          </div>
           <div class="bgx-commonly-used-options">
-            {this.commonOptions.map(value =>
+            {this.showCommon && this.commonOptions.length > 1 && this.commonOptions.map(value =>
               <label key={value.value} class={[
                 'bgx-label bgx-commonly-used-option',
                 this.selectedOptions.includes(value) ? 'bgx-option-selected' : ''
