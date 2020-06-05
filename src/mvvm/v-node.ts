@@ -6,6 +6,8 @@ const handleTypes = [
   'oninput', 'onInput',
   'onfocus', 'onFocus',
   'onblur', 'onBlur',
+  'onkeydown', 'onKeydown',
+  'onkeyup', 'onKeyup'
 ];
 // const inputAttributes = ['checked'];
 

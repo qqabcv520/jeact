@@ -122,7 +122,7 @@
   }
 
   .bgx-search-input {
-    width: 300px;
+    width: 450px;
     margin-right: 8px;
     position: relative;
   }
@@ -134,11 +134,25 @@
     background-color: #eee;
     padding: 4px 0;
   }
-
+  .bgx-commonly-used-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & > label {
+      margin: 0;
+    }
+    & > i {
+      flex: 1;
+      font-size: 20px;
+      color: #333;
+      text-align: right;
+      padding-right: 10px;
+      cursor: pointer;
+    }
+  }
   .bgx-commonly-used-options {
     display: flex;
     flex-wrap: wrap;
-    min-height: 60px;
   }
   .bgx-commonly-used-option {
     margin-top: 0;
@@ -147,7 +161,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
   }
 
   .bgx-options {
@@ -237,21 +250,33 @@
     border: 1px #eee solid;
     padding: 4px;
     z-index: 200;
+    .no-search-result {
+      padding: 20px 0;
+      text-align: center;
+      color: #999;
+    }
   }
-
+  .bgx-search-head {
+    display: flex;
+    & > label {
+      margin: 0 8px;
+    }
+  }
   .bgx-search-options {
     display: flex;
     flex-wrap: wrap;
-    min-height: 60px;
+    flex-direction: column;
   }
   .bgx-search-option {
     font-size: 12px;
     margin-top: 0;
+    margin-bottom: 0;
+    padding: 4px 8px;
     font-weight: normal;
-    width: 33.333333%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    cursor: pointer;
+    &:hover {
+      background-color: #eee;
+    }
   }
 
 }

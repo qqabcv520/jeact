@@ -3,7 +3,6 @@ import { createVNode, VNode } from '../../mvvm/v-node';
 import { mountComponent } from '../../utils';
 import './index.less'
 import { ValueComponentProps } from '../../mvvm/component';
-import { SingleCascaderOption } from '../single-cascader';
 
 export interface CascaderOption {
   value: any;
@@ -48,12 +47,13 @@ export class CascaderComponent extends ValueComponent<any[]> {
   open = false;
   commonOptions: CascaderOption[] = [];
   commonCheckedAll = false;
+  showCommon = true;
   selectedIndexes: number[] = [];
   leafOptions: CascaderOption[] = [];
   searchText = '';
-  searchOptions: CascaderOption[] = [];
+  searchOptions: any[] = [];
   searchCheckedAll = false;
-  showSearch = true;
+  showSearch = false;
 
   get columns(): CascaderOption[][] {
     let list = this.convertedOptions;
@@ -141,14 +141,10 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.update();
   }
 
-  commonCheckAll = (e: Event) => {
-    const checked = e.target['checked'];
-    this.commonOptions.forEach(value => this.checkOption(value, checked));
-    this.update();
-  };
-
   clear = () => {
     this.searchText = '';
+    this.searchOptions = [];
+    this.searchCheckedAll = false;
     this.commonCheckedAll = false;
     this.checkedOptions.forEach(value => {
       value.checked = false;
@@ -158,24 +154,74 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.onChange([]);
   };
 
-  searchChange = (e: Event) => {
-    this.searchText = e.target['value'] || '';
-    this.searchOptions =  this.leafOptions.filter(value => {
-      return value.label && value.label.toLowerCase().includes(this.searchText.toLowerCase());
+  searchInput = (e: InputEvent) => {
+    this.searchText = e.target['value']
+    this.update();
+  }
+
+  searchKeydown = (e: KeyboardEvent) => {
+    if (e.code === 'Enter') {
+      this.searchChange();
+    }
+  }
+
+  searchChange = () => {
+    if (!this.searchText) {
+      this.searchOptions = [];
+      return;
+    }
+    const searchedOptionsLinked = this.searchChildren(this.convertedOptions, this.searchText);
+    this.searchOptions = searchedOptionsLinked.map(value => {
+      const text = value.map(value1 => value1.label).join(' > ');
+      return {
+        text,
+        html: text.replace(RegExp(this.searchText, 'ig'), str => str.fontcolor('red')),
+        ids: value.map(value1 => value1.value),
+        originOption: value[value.length - 1]
+      };
     });
     this.checkSearchOption();
+    this.openSearchPopup();
     this.update();
   };
 
-  searchCheckAll = (e) => {
+  // 递归搜索children
+  searchChildren(options: CascaderOption[], searchText: string): CascaderOption[][] {
+    if (!options ) {
+      return [];
+    }
+    const lowerCaseSearchText = searchText.toLowerCase();
+    const searchedOptions = options.filter(value => (value.label || '').toLowerCase().includes(lowerCaseSearchText));
+    const childrenOptionsLinked = this.leafChildrenLinked(searchedOptions);
+
+    const notSearchedOptions = options.filter(value => !(value.label || '').toLowerCase().includes(lowerCaseSearchText));
+    const searchedOptionsLinked = notSearchedOptions
+        .filter(value => !this.isLeaf(value))
+        .flatMap(value => {
+          return this.searchChildren(value.children, searchText).map(value1 => [value, ...value1]);
+        });
+    return [...searchedOptionsLinked, ...childrenOptionsLinked];
+  }
+
+  // options到叶子节点的数组的数组
+  leafChildrenLinked(options: CascaderOption[]): CascaderOption[][]  {
+    if (!options) {
+      return [];
+    }
+    const leafLinked = options
+        .filter(value => this.isLeaf(value))
+        .map(value => [value]);
+    const childrenLeafLinked = options
+        .filter(value => !this.isLeaf(value))
+        .flatMap(value => { // 所有子节点和当前节点，拼成链
+          return this.leafChildrenLinked(value.children).map(value1 => [value, ...value1]);
+        });
+    return [...leafLinked, ...childrenLeafLinked];
+  }
+
+  searchCheckAll = (e: InputEvent) => {
     const checked = e.target['checked'];
-    this.searchOptions.forEach(value => this.checkOption(value, checked));
-    this.update();
-  };
-
-  // 关闭搜索弹窗
-  closeSearchPopup() {
-    this.showSearch = false;
+    this.searchOptions.forEach(value => this.checkOption(value.originOption, checked));
     this.update();
   };
 
@@ -183,6 +229,12 @@ export class CascaderComponent extends ValueComponent<any[]> {
   openSearchPopup = () => {
     this.showSearch = true;
     this.update()
+  };
+
+  // 关闭搜索弹窗
+  closeSearchPopup() {
+    this.showSearch = false;
+    this.update();
   };
 
   openPopup = (e: Event) => {
@@ -194,6 +246,19 @@ export class CascaderComponent extends ValueComponent<any[]> {
   closePopup() {
     this.open = false;
     this.searchText = '';
+    this.searchOptions = [];
+    this.searchCheckedAll = false;
+    this.update();
+  };
+
+  switchCommon = () => {
+    this.showCommon = !this.showCommon;
+    this.update();
+  }
+
+  commonCheckAll = (e: InputEvent) => {
+    const checked = e.target['checked'];
+    this.commonOptions.forEach(value => this.checkOption(value, checked));
     this.update();
   };
 
@@ -224,11 +289,11 @@ export class CascaderComponent extends ValueComponent<any[]> {
     return [...childrenLeaf, ...leaf];
   }
 
-  isLeaf(option: SingleCascaderOption): boolean {
+  isLeaf(option: CascaderOption): boolean {
     return (!option.children || !option.children.length);
   }
 
-  optionChange(e: Event, option: CascaderOption) {
+  optionChange(e: InputEvent, option: CascaderOption) {
     const checked = e.target['checked'];
     this.checkOption(option, checked);
     this.update();
@@ -284,45 +349,55 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
   // 更新搜索选择全选状态
   checkSearchOption() {
-    this.searchCheckedAll = this.searchOptions && this.searchOptions.length && this.searchOptions.every(value => value.checked);
+    this.searchCheckedAll = this.searchOptions && this.searchOptions.length && this.searchOptions.every(value => value.originOption.checked);
   }
 
   render() {
-    const checkedOptions = this.checkedOptions;
     let popup: VNode;
     if (this.open) {
       popup = <div class="bgx-popup" ref="popup">
         {/*搜索栏*/}
         <div class="bgx-search-bar">
           <div class="bgx-search-input" ref="search">
-            <input type="text" class="form-control input-sm" value={this.searchText} oninput={this.searchChange} onfocus={this.openSearchPopup} placeholder="请输入搜索关键字"/>
-            {this.searchText && this.showSearch && (<div class="bgx-search-popup" >
-              <label class="bgx-label">
-                  <input class="bgx-checkbox" type="checkbox" checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>
-                  全选
-              </label>
-                <div class="bgx-label bgx-search-options">
-                  { this.searchOptions.map(value =>
+            <div class="input-group">
+              <input type="text" class="form-control input-sm" value={this.searchText} placeholder="请输入搜索关键字"
+                     oninput={(e) => this.searchInput(e)} onkeydown={(e) => this.searchKeydown(e)} onfocus={this.openSearchPopup}/>
+              <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" type="button" onclick={this.searchChange}>搜索</button>
+              </span>
+            </div>
+            {this.searchText && this.showSearch && (<div class="bgx-search-popup">
+              {this.searchOptions.length > 1 ? [
+                <div class="bgx-search-head">
+                  <label class="bgx-label">
+                    <input class="bgx-checkbox" type="checkbox" checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>
+                    全选
+                  </label>
+                </div>,
+                <div class="bgx-search-options">
+                  {this.searchOptions.map(value =>
                     <label key={value.value} class="bgx-label bgx-search-option">
-                      <input class="bgx-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
-                      <span dangerouslySetInnerHTML={value.label.replace(RegExp(this.searchText, 'ig'), str => str.fontcolor("#1481db"))}>
-                      </span>
+                      <input class="bgx-checkbox" type="checkbox" checked={value.originOption.checked} onchange={(e) => this.optionChange(e, value.originOption)}/>
+                      <span dangerouslySetInnerHTML={value.html}></span>
                     </label>
                   )}
-                </div>
+                </div>] : <div class="no-search-result">暂无搜索结果</div>}
             </div>)}
           </div>
           <button class="btn btn-default btn-sm" type="button" onclick={this.clear}>清空</button>
         </div>
         {/*常用选择*/}
         <div class="bgx-commonly-used">
-          <label class="bgx-label">
-            <input class="bgx-checkbox" type="checkbox" checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>
-            常用选择
-          </label>
+          <div class="bgx-commonly-used-head">
+            <label class="bgx-label">
+              <input class="bgx-checkbox" type="checkbox" checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>
+              常用选择
+            </label>
+            <i onclick={this.switchCommon}>{ this.showCommon ? '-' : '+'}</i>
+          </div>
           <div class="bgx-commonly-used-options">
-            {this.commonOptions.map(value =>
-              <label key={value.value} class="bgx-label bgx-commonly-used-option">
+            {this.showCommon && this.commonOptions.length > 1 && this.commonOptions.map(value =>
+              <label key={value.value} class="bgx-label bgx-commonly-used-option" title={value.label}>
                 <input class="bgx-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
                 {value.label}
               </label>
@@ -348,11 +423,11 @@ export class CascaderComponent extends ValueComponent<any[]> {
         {/*已选择计数*/}
         <div class="bgx-selected-cnt">
           <span class="bgx-selected-label">已选择</span>
-          {String(checkedOptions.length)}/{this.leafOptions.length}
+          {String(this.checkedOptions.length)}/{this.leafOptions.length}
         </div>
         {/*已选择option*/}
         <div class="bgx-selected-tags">
-          {checkedOptions.map(value =>
+          {this.checkedOptions.map(value =>
             <div class="bgx-selected-tag">
               {value.label}
               <span class="bgx-close" onclick={() => this.checkOption(value, false)}>×</span>
@@ -373,7 +448,6 @@ export class CascaderComponent extends ValueComponent<any[]> {
       </div>
     );
   }
-
 }
 
 
