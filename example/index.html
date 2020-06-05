@@ -76,13 +76,12 @@ $.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list ', {
   headers: { platformNo: 27 }
 });
 
-function showModal () {
+function showModal() {
   var com = $.pictureSelector({
     onOk: function() {
       console.log(com.selectedImg);
     }
   })
-  console.log(com);
 }
 
 </script>
