@@ -82,10 +82,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   }
 
   writeValue(value: string) {
-<<<<<<< HEAD
     this.value = value;
-=======
-    this.value = value ? value.split(',') : [];
     if (this.convertedOptions != null) {
       this.leafOptions.forEach(value1 => value1.selected = String(this.value) === String(value1.value));
       if (this.selectedOptions.length) {
@@ -94,7 +91,6 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
       }
       this.update();
     }
->>>>>>> 3dab384... --task=1497413 --user=范子才 【前端】【禁售配置】根据配置类目组装通用类目树 https://www.tapd.cn/55786408/s/4058911
   }
 
   // 组件声明周期hook，当组件创建后调用，此时尚未挂载DOM
@@ -133,9 +129,8 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
       this.selectedString = this.getSelectedString(option);
       this.saveCommonOption(option);
       this.onChange(option.value);
+      this.closePopup();
     }
-    this.closeSearchPopup();
-    this.closePopup();
     this.update();
   }
 
@@ -193,6 +188,8 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
 
   searchKeydown = (e: KeyboardEvent) => {
     if (e.code === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
       this.searchChange();
     }
   }
@@ -272,6 +269,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     this.open = false;
     this.searchText = '';
     this.searchOptions = [];
+    this.closeSearchPopup();
     this.update();
   };
 

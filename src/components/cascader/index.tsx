@@ -161,6 +161,8 @@ export class CascaderComponent extends ValueComponent<any[]> {
 
   searchKeydown = (e: KeyboardEvent) => {
     if (e.code === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
       this.searchChange();
     }
   }
@@ -248,6 +250,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
     this.searchText = '';
     this.searchOptions = [];
     this.searchCheckedAll = false;
+    this.closeSearchPopup();
     this.update();
   };
 

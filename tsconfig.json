@@ -15,7 +15,7 @@
         "experimentalDecorators": true,
         "strict": false,
         "moduleResolution": "node",
-        "types": ["node"],
+        "types": ["node", "jquery"],
         "jsx": "react",
         "jsxFactory": "createVNode",
         "lib": [
