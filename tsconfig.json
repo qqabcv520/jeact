@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": ".",
         "sourceMap": true, //代码映射
         "noImplicitAny": false, //强类型检查
         "noImplicitThis": true, // 禁止this为any类型
@@ -14,18 +15,26 @@
         "skipLibCheck": true,
         "experimentalDecorators": true,
         "strict": false,
+        "esModuleInterop": true,
         "moduleResolution": "node",
         "types": ["node", "jquery"],
         "jsx": "react",
         "jsxFactory": "createVNode",
+        "declaration": true,
+        "outDir": "dist",
         "lib": [
             "es2015",
             "es2016.array.include",
             "esnext.array",
             "dom"
-        ]
+        ],
+        "rootDir": ".",
+        "paths": {
+            "@jqvm/*": ["packages/*/src"],
+            "jq-mvvm": ["packages/jq-mvvm/src"]
+        }
     },
     "include": [
-        "./src/**/*"
+        "./packages/*/src/**/*"
     ]
 }

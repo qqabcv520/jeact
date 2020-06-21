@@ -1,6 +1,4 @@
-import { Component, Type } from './mvvm';
-import JQuery from 'jquery';
-import { ModalComponent } from '.';
+import { Component, Type } from './component';
 
 // 判空
 export function isEmpty(value: any) {
@@ -21,11 +19,11 @@ export interface mountComponentArgs {
   name: string;
   componentType: Type<Component>;
   props: string[];
-  $?: JQueryStatic;
+  $?: any;
 }
 
 // 挂载为jquery插件
-export function mountComponent ({name, componentType, props, $ = JQuery}: mountComponentArgs) {
+export function mountComponent ({name, componentType, props, $ = window['JQuery']}: mountComponentArgs) {
   if ($ == null) {
     return;
   }
@@ -67,23 +65,5 @@ export function mountComponent ({name, componentType, props, $ = JQuery}: mountC
 
 }
 
-export interface MountModalArgs<T extends Component> extends Partial<ModalComponent<T>>{
-  name: string;
-  title: string
-  $?: JQueryStatic;
-}
 
-export function mountModal<T extends Component>(args: MountModalArgs<T>) {
-  const {
-    name,
-    $ = JQuery,
-    ...restProp
-  } = args;
-  $[name] = function(contentProps: Partial<T>) {
-    return Component.create<ModalComponent<T>>(ModalComponent, {
-      ...restProp,
-      ...contentProps,
-    }, document.body);
-  }
 
-}

@@ -1,0 +1,12 @@
+{
+  "name": "jq-mvvm",
+  "version": "1.0.0",
+  "description": "jq-mvvm",
+  "main": "index.ts",
+  "author": "fanzicai",
+  "license": "MIT",
+  "types": "types/jq-mvvm.d.ts",
+  "peerDependencies": {
+    "jquery": "^3.5.0"
+  }
+}

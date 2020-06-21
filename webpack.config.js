@@ -1,62 +1,63 @@
-var path = require('path')
-var {CleanWebpackPlugin} = require('clean-webpack-plugin') // 删除插件
-var MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path')
+const {CleanWebpackPlugin} = require('clean-webpack-plugin') // 删除插件
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
+if (!process.env.PACKAGE_NAME) {
+    throw new Error('TARGET package must be specified via --environment flag.')
+}
 
-var babelLoader = {
+const packageDir = path.resolve(__dirname, 'packages', process.env.PACKAGE_NAME)
+const name = path.basename(packageDir)
+const target = process.env.TARGET
+const sourceMap = process.env.SOURCE_MAP
+const type = process.env.TYPE
+const babelLoader = {
     loader: 'babel-loader',
     options: {
         cacheDirectory: true,
     }
 };
 
+const cssLoader = [
+    MiniCssExtractPlugin.loader,
+    {loader: 'css-loader', options: {sourceMap: true}},
+    {
+        loader: 'postcss-loader',
+        options: {
+            sourceMap: true,
+            plugins: [
+                require('autoprefixer')(),
+                require('cssnano')(),
+            ],
+        }
+    }
+];
+
+console.log(type);
+
 module.exports = {
     //入口文件配置
     entry: {
-        app: './src/index.ts'
+        [name]: path.resolve(packageDir, "src/index.ts")
     },
     //文件导出的配置
     output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: "bundle.js",
-        libraryTarget: 'umd',
+        path: path.resolve(packageDir, "dist"),
+        filename: `[name].${target}.js`,
+        libraryTarget: target,
     },
-    devtool: 'source-map',
+    ...(sourceMap ? {devtool: 'source-map'} : {}),
     //模块配置
     module: {
         rules: [
             {
                 test: /\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {loader: 'css-loader', options: {sourceMap: true}},
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true,
-                            plugins: [
-                                require('autoprefixer')(),
-                                require('cssnano')(),
-                            ],
-                        }
-                    }
-                ]
+                use: cssLoader
             },
             {
                 test: /\.less$/,
                 use: [
-                    MiniCssExtractPlugin.loader,
-                    {loader: 'css-loader', options: {sourceMap: true}},
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true,
-                            plugins: [
-                                require('autoprefixer')(),
-                                require('cssnano')(),
-                            ],
-                        }
-                    },
+                    ...cssLoader,
                     {
                         loader: 'less-loader',
                         options: {
@@ -79,7 +80,13 @@ module.exports = {
                 use: [
                     babelLoader,
                     {
-                        loader: 'ts-loader'
+                        loader: 'ts-loader',
+                        options: {
+                            compilerOptions: {
+                                declaration: !!type,
+                                declarationDir: path.resolve(packageDir, "dist")
+                            }
+                        }
                     }
                 ]
             },
@@ -96,16 +103,16 @@ module.exports = {
         //默认后缀
         extensions: [".ts", ".tsx", ".js", ".json"]
     },
-    // 不打包的文件
-    externals: {
-        jquery: '$',
-    },
+    // // 不打包的文件
+    // externals: {
+    //     jquery: '$',
+    // },
     //插件配置
     plugins: [
-        new CleanWebpackPlugin({
-            verbose: true,
-            dry: false
-        }),
+        // new CleanWebpackPlugin({
+        //     verbose: true,
+        //     dry: false
+        // }),
         new MiniCssExtractPlugin({
             filename: 'bundle.css'
         }),

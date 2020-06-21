@@ -1,8 +1,4 @@
-import { ValueComponent } from '../../mvvm';
-import { createVNode, VNode } from '../../mvvm/v-node';
-import { mountComponent } from '../../utils';
-import './index.less'
-import { ValueComponentProps } from '../../mvvm/component';
+import { ValueComponent, ValueComponentProps, createVNode, mountComponent, VNode } from 'jq-mvvm/src';
 
 export interface CascaderOption {
   value: any;

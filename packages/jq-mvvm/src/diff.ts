@@ -1,5 +1,5 @@
 import { isVComponent, isVDom, isVElement, isVFunction, isVText, VElement, VNode } from './v-node';
-import { isEmpty } from '../utils';
+import { isEmpty } from './utils';
 import { DomOperate } from './dom';
 
 

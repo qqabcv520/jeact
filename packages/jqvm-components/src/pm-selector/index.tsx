@@ -1,10 +1,5 @@
-import { ValueComponent } from '../../mvvm';
-import { createVNode, VNode } from '../../mvvm/v-node';
-import { mountComponent } from '../../utils';
 import './index.less'
-import { ValueComponentProps } from '../../mvvm/component';
-import { CascaderOption } from '../cascader';
-
+import { ValueComponentProps, ValueComponent, VNode, mountComponent, createVNode } from 'jq-mvvm/src';
 
 export interface PmSelectorOption {
   value: any;
@@ -241,7 +236,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     values?: any[],
   ): PmSelectorOption[] {
     return (options || []).map(option => {
-      const obj: CascaderOption = {
+      const obj: PmSelectorOption = {
         value: option[valueField],
         label: option[labelField],
         checked: (values || []).includes(String(option[valueField])),

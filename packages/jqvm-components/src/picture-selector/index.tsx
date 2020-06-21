@@ -1,22 +1,8 @@
-import { Component } from '../../mvvm';
-import { createVNode } from '../../mvvm/v-node';
 import './index.less'
-import { mountModal } from '../../utils';
 import classname from 'classname';
 import Sortable from 'sortablejs';
-import { ModalComponent } from '../modal';
-
-
-// $.pictureSelector({
-//   code: 'SKU123456',
-//   pics: [], // 已经被选中的图片
-//   onOk: function (pics) {
-//     console.log(pics); // 图片url数组
-//   },
-//   onCancel: function() {
-//     // 取消选择
-//   }
-// });
+import { ModalComponent, mountModal } from '../modal';
+import { Component, createVNode } from 'jq-mvvm/src';
 
 interface ImageInfo {
   mainImgUrl: string;

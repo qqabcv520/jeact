@@ -1,7 +1,6 @@
-import { Component, Type, VNode } from '../../mvvm';
-import { createVNode, isVNode } from '../../mvvm/v-node';
 import './index.less'
-import { ComponentProps } from '../../mvvm/component';
+import JQuery from 'jquery';
+import { Component, Type, VNode, isVNode, createVNode, ComponentProps } from 'jq-mvvm/src';
 
 export interface ModalComponentProps<T extends Component> extends ComponentProps {
   content: Type<T>,
@@ -84,3 +83,23 @@ export class ModalComponent<T extends Component> extends Component {
 }
 
 
+export function mountModal<T extends Component>(args: MountModalArgs<T>) {
+  const {
+    name,
+    $ = JQuery,
+    ...restProp
+  } = args;
+  $[name] = function(contentProps: Partial<T>) {
+    return Component.create<ModalComponent<T>>(ModalComponent, {
+      ...restProp,
+      ...contentProps,
+    }, document.body);
+  }
+}
+
+
+export interface MountModalArgs<T extends Component> extends Partial<ModalComponent<T>>{
+  name: string;
+  title: string
+  $?: JQueryStatic;
+}
