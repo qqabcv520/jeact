@@ -1,4 +1,4 @@
-import { ValueComponent, ValueComponentProps, createVNode, mountComponent, VNode } from 'jq-mvvm/src';
+import { ValueComponent, ValueComponentProps, createVNode, mountComponent, VNode } from 'jq-mvvm';
 
 export interface CascaderOption {
   value: any;

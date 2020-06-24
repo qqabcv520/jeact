@@ -33,8 +33,6 @@ const cssLoader = [
     }
 ];
 
-console.log(type);
-
 module.exports = {
     //入口文件配置
     entry: {
@@ -83,8 +81,12 @@ module.exports = {
                         loader: 'ts-loader',
                         options: {
                             compilerOptions: {
-                                declaration: !!type,
-                                declarationDir: path.resolve(packageDir, "dist")
+                                ...(!!type ?
+                                    {
+                                        declaration: true,
+                                    } : {}
+                                )
+
                             }
                         }
                     }
@@ -104,9 +106,9 @@ module.exports = {
         extensions: [".ts", ".tsx", ".js", ".json"]
     },
     // // 不打包的文件
-    // externals: {
-    //     jquery: '$',
-    // },
+    externals: {
+        jquery: '$',
+    },
     //插件配置
     plugins: [
         // new CleanWebpackPlugin({
@@ -114,7 +116,7 @@ module.exports = {
         //     dry: false
         // }),
         new MiniCssExtractPlugin({
-            filename: 'bundle.css'
+            filename: `[name].${target}.css`,
         }),
     ],
 }

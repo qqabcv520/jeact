@@ -98,9 +98,9 @@ export abstract class Component {
     return null;
   };
 
-
-  static create<T extends Component>(componentType: Type<T>, props: Partial<T>, el?: HTMLElement): T {
-    const component = new componentType({...props, el});
+  static create<T extends Component>(componentType: Type<T>, props: Partial<T>, el?: HTMLElement | string): T {
+    const dom = typeof el === 'string' ? document.querySelector(el) : el;
+    const component = new componentType({...props, el: dom});
     component.beforeMount();
     component.mount();
     component.mounted();
@@ -162,3 +162,8 @@ export class FunctionComponent<T> extends Component {
 }
 
 
+export function renderDOM(vNode: VNode, el: string | HTMLElement) {
+  Component.create(FunctionComponent, {
+    renderFunction: () => vNode,
+  }, el);
+}

@@ -1,6 +1,6 @@
 import './index.less'
 import JQuery from 'jquery';
-import { Component, Type, VNode, isVNode, createVNode, ComponentProps } from 'jq-mvvm/src';
+import { Component, Type, VNode, isVNode, createVNode, ComponentProps } from 'jq-mvvm';
 
 export interface ModalComponentProps<T extends Component> extends ComponentProps {
   content: Type<T>,

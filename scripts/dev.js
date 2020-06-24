@@ -5,7 +5,7 @@ const { fuzzyMatchTarget } = require('./utils')
 const args = require('minimist')(process.argv.slice(2))
 const packageName = args._.length ? fuzzyMatchTarget(args._)[0] : 'jq-mvvm'
 const target = args.target || args.t
-const sourceMap = args.sourcemap || args.s
+const sourceMap = args.sourcemap || args.s || true
 
 
 execa(

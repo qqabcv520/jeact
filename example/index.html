@@ -4,57 +4,27 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
-  <link href="../dist/bundle.css" rel="stylesheet">
+<!--  <link href="../dist/bundle.css" rel="stylesheet">-->
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1066846_r6je8g5gi4d.css">
 </head>
 <body style="background-color: #f1f1f1">
-<input id="category1" name="xxx"  value="">
-<input id="category2" name="xxx"  value="">
-
-<button class="btn btn-default" type="button" onclick="showModal()">弹窗</button>
-
+  <div id="el-1"></div>
+  <div id="el-2"></div>
 </body>
 <script src="../node_modules/jquery/dist/jquery.js"></script>
-<script src="../dist/bundle.js"></script>
+<script src="../packages/jq-mvvm/dist/jq-mvvm.umd.js"></script>
 <script>
+  const el = createVNode;
 
-$('#category1').cascader({
-  placeholder: '类目1',
-  valueField: 'categoryIdStr',
-  labelField: 'categoryName',
-  childrenField: 'subCategoriesList',
-  cacheName: 'categoryCascader',
-})
-$('#category2').singleCascader({
-  placeholder: '类目2',
-  valueField: 'categoryIdStr',
-  labelField: 'categoryName',
-  childrenField: 'subCategoriesList',
-  cacheName: 'categorySingleCascader',
-  valueChange: function(value) {
-    console.log(value);
+  renderDOM(el('div', {}, 'test1'), '#el-1')
+
+  // class 组件
+  class TestComponent extends Component {
+    render () {
+      return el('div', {}, 'test2')
+    }
   }
-})
-$.ajax('http://192.168.1.146:8783/saleslister/category/get_limit_tree_list ', {
-  success: function(res) {
-    if (res && res.success) {
-      $('#category1').cascader('options', res.result)
-      $('#category2').singleCascader('options', res.result)
-    }
-  },
-  type: 'POST',
-  contentType: "application/json",
-  data: JSON.stringify({ shopId: 8835 }),
-  headers: { platformNo: 27 }
-});
-
-function showModal() {
-  var com = $.pictureSelector({
-    onOk: function() {
-      console.log(com.selectedImg);
-    }
-  })
-}
+  renderDOM(el(TestComponent), '#el-2')
 
 </script>
 </html>

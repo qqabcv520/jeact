@@ -21,18 +21,12 @@
         "jsx": "react",
         "jsxFactory": "createVNode",
         "declaration": true,
-        "outDir": "dist",
         "lib": [
             "es2015",
             "es2016.array.include",
             "esnext.array",
             "dom"
-        ],
-        "rootDir": ".",
-        "paths": {
-            "@jqvm/*": ["packages/*/src"],
-            "jq-mvvm": ["packages/jq-mvvm/src"]
-        }
+        ]
     },
     "include": [
         "./packages/*/src/**/*"

@@ -1,5 +1,5 @@
 
-import { ValueComponentProps, ValueComponent, VNode, mountComponent, createVNode } from 'jq-mvvm/src';
+import { ValueComponentProps, ValueComponent, VNode, mountComponent, createVNode } from 'jq-mvvm';
 import './index.less'
 
 export interface SingleCascaderOption {

@@ -2,7 +2,7 @@ import './index.less'
 import classname from 'classname';
 import Sortable from 'sortablejs';
 import { ModalComponent, mountModal } from '../modal';
-import { Component, createVNode } from 'jq-mvvm/src';
+import { Component, createVNode } from 'jq-mvvm';
 
 interface ImageInfo {
   mainImgUrl: string;
