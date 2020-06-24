@@ -5,14 +5,24 @@
   <title>Title</title>
 </head>
 <body >
-  <div id="el-1"></div>
-  <div id="el-2"></div>
+  <div id="el"></div>
 </body>
-<script src="../node_modules/jquery/dist/jquery.js"></script>
 <script src="./js/jq-mvvm.umd.js"></script>
 <script>
   const el = createVNode;
 
+  // functional 组件
+  function Counter({count}) {
+    console.log(count);
+    return el('div', {},
+      el('span', {}, '点击了：'),
+      el('span', {}, count),
+      el('span', {}, '次')
+    )
+  }
+
+
+  // class 组件
   class TestComponent extends Component {
     constructor (props) {
       super(props);
@@ -20,20 +30,17 @@
     }
     buttonClick = () => {
       this.count++;
-      console.log(this.count);
       this.update();
     }
     render () {
       return el('div', {},
         el('button', {onclick: this.buttonClick}, '按钮'),
-        el('span', {}, ' 点击了：'),
-        el('span', {}, this.count),
-        el('span', {}, '次')
+        el(Counter, {count: this.count}),
       )
     }
   }
 
-  Component.create(TestComponent, {}, '#el-2')
+  Component.create(TestComponent, {}, '#el')
 
 </script>
 </html>

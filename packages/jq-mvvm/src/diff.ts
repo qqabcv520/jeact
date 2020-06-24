@@ -196,6 +196,11 @@ export class Differentiator {
     }
     if (isVFunction(oldVNode) && isVFunction(newVNode)) {
       newVNode.component = oldVNode.component;
+      newVNode.component.functionProps =  {
+        ...newVNode.attributes,
+        ...newVNode.handles,
+        children: newVNode.children,
+      };
       const v = oldVNode.component.runDiff();
       oldVNode.el = v && v.el;
       return;
