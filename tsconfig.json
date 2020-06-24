@@ -26,7 +26,12 @@
             "es2016.array.include",
             "esnext.array",
             "dom"
-        ]
+        ],
+        "rootDir": ".",
+        "paths": {
+            "@jqvm/*": ["packages/*"],
+            "jq-mvvm": ["packages/jq-mvvm"]
+        }
     },
     "include": [
         "./packages/*/src/**/*"
