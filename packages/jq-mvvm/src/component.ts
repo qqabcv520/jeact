@@ -20,7 +20,7 @@ export abstract class Component {
   private updateFlag = false;
   protected readonly dom = new DomOperate(this);
   protected readonly diff = new Differentiator(this.dom);
-  readonly el: HTMLElement;
+  el: HTMLElement;
   readonly refs: {
     [key: string]: Element | Component;
   } = {};
@@ -100,7 +100,8 @@ export abstract class Component {
 
   static create<T extends Component>(componentType: Type<T>, props: Partial<T>, el?: HTMLElement | string): T {
     const dom = typeof el === 'string' ? document.querySelector(el) : el;
-    const component = new componentType({...props, el: dom});
+    const component = new componentType({...props});
+    component.el = dom as HTMLElement;
     component.beforeMount();
     component.mount();
     component.mounted();
@@ -116,9 +117,9 @@ export abstract class ValueComponent<T> extends Component {
   readonly el: HTMLInputElement;
   protected valueChange: (options: T) => void;
 
-  protected constructor(args: ValueComponentProps<T>) {
-    super(args);
-    this.valueChange = args.valueChange;
+  protected constructor(props: ValueComponentProps<T>) {
+    super(props);
+    this.valueChange = props.valueChange;
   }
 
   mount() {
