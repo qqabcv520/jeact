@@ -7,5 +7,5 @@
 
 
 export { mountComponent } from './utils';
-export { Component, ValueComponent, Type, ComponentProps, ValueComponentProps, renderDOM } from './component';
+export { Component, ValueComponent, Type, ComponentProps, ValueComponentProps } from './component';
 export { VNode, VDom, VText, createVNode, isVNode } from './v-node';

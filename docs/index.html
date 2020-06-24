@@ -13,15 +13,27 @@
 <script>
   const el = createVNode;
 
-  renderDOM(el('div', {}, 'test1'), '#el-1')
-
-  // class 组件
   class TestComponent extends Component {
+    constructor (props) {
+      super(props);
+      this.count = 0;
+    }
+    buttonClick = () => {
+      this.count++;
+      console.log(this.count);
+      this.update();
+    }
     render () {
-      return el('div', {}, 'test2')
+      return el('div', {},
+        el('button', {onclick: this.buttonClick}, '按钮'),
+        el('span', {}, ' 点击了：'),
+        el('span', {}, this.count),
+        el('span', {}, '次')
+      )
     }
   }
-  renderDOM(el(TestComponent), '#el-2')
+
+  Component.create(TestComponent, {}, '#el-2')
 
 </script>
 </html>

@@ -162,8 +162,3 @@ export class FunctionComponent<T> extends Component {
 }
 
 
-export function renderDOM(vNode: VNode, el: string | HTMLElement) {
-  Component.create(FunctionComponent, {
-    renderFunction: () => vNode,
-  }, el);
-}
