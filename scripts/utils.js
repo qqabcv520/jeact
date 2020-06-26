@@ -1,4 +1,5 @@
 const fs = require('fs');
+const chalk = require('chalk')
 
 const packagesName = fs.readdirSync('packages').filter(f => {
   if (!fs.statSync(`packages/${f}`).isDirectory()) {
@@ -33,7 +34,9 @@ exports.fuzzyMatchTarget = (partialTargets, includeAllMatching) => {
   } else {
     console.log()
     console.error(
-      `ERROR: Target ${partialTargets} not found!`
+      `  ${chalk.bgRed.white(' ERROR ')} ${chalk.red(
+        `Target ${chalk.underline(partialTargets)} not found!`
+      )}`
     )
     console.log()
 

@@ -1,6 +1,6 @@
 {
   "name": "jq-mvvm",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "jq-mvvm",
   "main": "index.ts",
   "module": "src/index.ts",
