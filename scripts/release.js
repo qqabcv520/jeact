@@ -82,9 +82,6 @@ async function main() {
   step('\nBuilding all packages...')
   if (!skipBuild && !isDryRun) {
     await run('yarn', ['build', '--release'])
-    // test generated dts files
-    step('\nVerifying type declarations...')
-    await run('yarn', ['test-dts-only'])
   } else {
     console.log(`(skipped)`)
   }
@@ -96,7 +93,7 @@ async function main() {
   if (stdout) {
     step('\nCommitting changes...')
     await runIfNotDry('git', ['add', '-A'])
-    await runIfNotDry('git', ['commit', '-m', `release: v${targetVersion}`])
+    await runIfNotDry('git', ['commit', '-m', `chore: v${targetVersion}`])
   } else {
     console.log('No changes to commit.')
   }

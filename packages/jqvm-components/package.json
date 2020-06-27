@@ -1,6 +1,6 @@
 {
   "name": "@jqvm/component",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "@jqvm/component",
   "main": "index.ts",
   "author": "fanzicai",
@@ -12,6 +12,12 @@
     "sortablejs": "^1.10.2",
     "jq-mvvm": "~0.1.0"
   },
+  "files": [
+    "index.js",
+    "index.ts",
+    "src/**/*.d.ts",
+    "dist"
+  ],
   "peerDependencies": {
     "jquery": "^3.5.0"
   }
