@@ -123,10 +123,10 @@ export abstract class ValueComponent<T> extends Component {
   }
 
   mount() {
-    super.mount();
     if (this.el) {
       this.writeValue(this.el.value);
     }
+    super.mount();
   }
 
   readValue(value: any): string {
