@@ -23,7 +23,7 @@ export interface mountComponentArgs {
 }
 
 // 挂载为jquery插件
-export function mountComponent ({name, componentType, props, $ = window['JQuery']}: mountComponentArgs) {
+export function mountComponent ({name, componentType, props, $ = window['jQuery']}: mountComponentArgs) {
   if ($ == null) {
     return;
   }
@@ -55,7 +55,7 @@ export function mountComponent ({name, componentType, props, $ = window['JQuery'
   $(function () {
     $(`[${getKebabCase(name)}]`).each(function (this) {
       const $selected = $(this);
-      const propsValue = props.reduce((pre, curr) => {
+      const propsValue = (props || []).reduce((pre, curr) => {
         pre[curr] = $selected.attr(getKebabCase(curr));
         return pre;
       }, {})

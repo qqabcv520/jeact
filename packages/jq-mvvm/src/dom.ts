@@ -86,18 +86,19 @@ export class DomOperate {
       });
       Object.keys(oldVNode.attributes).forEach(key => {
         if (!newVNode.attributes.hasOwnProperty(key)) {
-          this.removeAttribute(el, key);
+          this.removeAttribute(el, key, oldVNode.attributes[key]);
         }
       });
 
       Object.keys(newVNode.attributes).forEach(key => {
         const value = newVNode.attributes[key];
-        if (value === oldVNode.attributes[key]) {
+        const oldValue = oldVNode.attributes[key];
+        if (value === oldValue) {
           return;
         } else if (value && value !== 0) {
-          this.setAttribute(el, key, value);
+          this.setAttribute(el, key, value, oldValue);
         } else {
-          this.removeAttribute(el, key);
+          this.removeAttribute(el, key, oldValue);
         }
       });
     } else if (isVText(newVNode) && isVText(oldVNode) && newVNode.content != oldVNode.content) {
@@ -112,7 +113,7 @@ export class DomOperate {
   }
 
 
-  setAttribute(el: Element, attrName: string, attrValue: any) {
+  setAttribute(el: Element, attrName: string, attrValue: any, oldValue: any = {}) {
     if (el instanceof HTMLInputElement &&  el.type === 'checkbox' && attrName === 'checked') {
       el['checked'] = attrValue;
       return;
@@ -125,23 +126,47 @@ export class DomOperate {
       el.innerHTML = attrValue;
       return;
     }
+    if (typeof attrValue !== 'string' && el instanceof HTMLElement && attrName === 'style') {
+      Object.keys(oldValue).forEach(key => {
+        if (!attrValue.hasOwnProperty(key)) {
+          el.style[key] = '';
+        }
+      });
+      Object.keys(attrValue).forEach(key => {
+        const value = attrValue[key];
+        if (value === oldValue[key]) {
+          return;
+        } else if (value && value !== 0) {
+          el.style[key] = value;
+        } else {
+          el.style[key] = '';
+        }
+      });
+      return;
+    }
     if (attrName === 'ref') {
       this.context.refs[attrValue] = el;
     }
     attrValue && attrValue !== 0 && el.setAttribute(attrName, String(attrValue === true ? '' : attrValue));
   }
 
-  removeAttribute(el: HTMLElement, attrName: string) {
+  removeAttribute(el: HTMLElement, attrName: string, oldValue: any = {}) {
     if (el instanceof HTMLInputElement &&  el.type === 'checkbox' && attrName === 'checked') {
-      el['checked'] = false;
+      el[attrName] = false;
       return;
     }
     if (el instanceof HTMLInputElement && attrName === 'value') {
-      el['value'] = '';
+      el[attrName] = '';
       return;
     }
     if (attrName === 'dangerouslySetInnerHTML') {
       el.innerHTML = '';
+      return;
+    }
+    if (el instanceof HTMLElement && attrName === 'style') {
+      Object.keys(oldValue).forEach(key => {
+        el.style[key] = '';
+      });
       return;
     }
     el.removeAttribute(attrName);

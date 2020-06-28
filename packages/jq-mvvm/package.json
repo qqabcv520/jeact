@@ -2,13 +2,12 @@
   "name": "jq-mvvm",
   "version": "0.1.1",
   "description": "jq-mvvm",
-  "main": "index.ts",
+  "main": "index.js",
   "module": "src/index.ts",
   "author": "fanzicai",
   "license": "MIT",
   "files": [
     "index.js",
-    "index.ts",
     "src/**/*.d.ts",
     "dist"
   ],

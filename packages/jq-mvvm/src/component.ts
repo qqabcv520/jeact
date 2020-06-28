@@ -130,14 +130,19 @@ export abstract class ValueComponent<T> extends Component {
   }
 
   readValue(value: any): string {
-    return value ? String(value) : '';
+    return value != null ? String(value) : '';
   }
 
   onChange(value: T) {
-    this.el.value = this.readValue(value);
     if (this.valueChange) {
       this.valueChange(value);
     }
+    if (this.el) {
+      this.el.value = this.readValue(value);
+      this.el.dispatchEvent(new InputEvent('input'));
+      this.el.dispatchEvent(new UIEvent('change'));
+    }
+
   }
 
   appendToEl(node: HTMLElement) {
