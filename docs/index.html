@@ -16,11 +16,16 @@
   <hr>
   <br>
   <br>
-  挂载为jquery组件，可直接用js获取value：
+  挂载为jquery组件，可直接获取value：
   <br>
   <br>
 
-  <input switch />
+  <form id="test-form">
+    <input custom-switch name="test-switch" id="test-switch" value="true" />
+    <br>
+    <button>提交</button>
+    <button type="button" id="reset">关闭</button>
+  </form>
 
 </body>
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
@@ -105,20 +110,30 @@
     }
   }
 
-
   //------------------挂载到页面------------------
   Component.create(TestComponent, {}, '#el')
 
 
   //------------------绑定到jquery------------------
   mountComponent({
-    name: 'switch',
+    name: 'customSwitch',
     componentType: SwitchComponent,
   })
 
   //------------------直接用jquery操作------------------
-  $('[switch]').on('change', function() {
+
+  $('#test-form').on('submit', function(event) {
+    event.preventDefault();
+    alert('提交表单数据：' + JSON.stringify($(this).serializeArray()));
+  })
+
+  $('#test-switch').on('change', function() {
     console.log($(this).val());
+  })
+
+  $('#reset').on('click', function () {
+    $('#test-switch').customSwitch('state', false);
+    $('#test-switch').customSwitch('update');
   })
 
 </script>
