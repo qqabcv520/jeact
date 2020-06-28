@@ -5,24 +5,39 @@
   <title>Title</title>
 </head>
 <body >
+  简单例子：
+  <br>
+  <br>
+
   <div id="el"></div>
+
+  <br>
+  <br>
+  <hr>
+  <br>
+  <br>
+  挂载为jquery组件，可直接用js获取value：
+  <br>
+  <br>
+
+  <input switch />
+
 </body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
 <script src="./js/jq-mvvm.umd.js"></script>
 <script>
   const el = createVNode;
 
-  // functional 组件
+  // ------------------functional 组件------------------
   function Counter({count}) {
-    console.log(count);
-    return el('div', {},
-      el('span', {}, '点击了：'),
+    return el('span', {},
+      el('span', {}, ' 点击了：'),
       el('span', {}, count),
       el('span', {}, '次')
     )
   }
 
-
-  // class 组件
+  // ------------------class 组件------------------
   class TestComponent extends Component {
     constructor (props) {
       super(props);
@@ -36,11 +51,75 @@
       return el('div', {},
         el('button', {onclick: this.buttonClick}, '按钮'),
         el(Counter, {count: this.count}),
+        el('br'),
+        el('br'),
+        el(SwitchComponent)
       )
     }
   }
 
+  //------------------表单组件------------------
+  class SwitchComponent extends ValueComponent {
+
+    constructor (props) {
+      super(props);
+      this.state = false;
+    }
+
+    writeValue(value) {
+      this.state = value && value !== 'false';
+    }
+
+    buttonClick = () => {
+      this.state = !this.state;
+      this.onChange(this.state);
+      this.update();
+    }
+    render () {
+      const switchWrapperStyle = {
+        userSelect: 'none',
+        cursor: 'pointer',
+        border: '1px solid #ccc',
+        display: 'inline-block',
+        borderRadius: '10px',
+        height: '20px',
+        width: '35px',
+      }
+      const switchHandlerStyle = {
+        width: '20px',
+        height: '100%',
+        backgroundColor: '#3587ff',
+        borderRadius: '10px',
+        transition: 'margin 0.15s, background-color 0.3s'
+      }
+      if (this.state) {
+        switchHandlerStyle.marginLeft = '15px';
+        switchHandlerStyle.backgroundColor = '#3587ff';
+      } else {
+        switchHandlerStyle.marginLeft = '0';
+        switchHandlerStyle.backgroundColor = '#999';
+      }
+      return el('div', {style: switchWrapperStyle, onclick: this.buttonClick},
+        el('div', {style: switchHandlerStyle}),
+      );
+    }
+  }
+
+
+  //------------------挂载到页面------------------
   Component.create(TestComponent, {}, '#el')
+
+
+  //------------------绑定到jquery------------------
+  mountComponent({
+    name: 'switch',
+    componentType: SwitchComponent,
+  })
+
+  //------------------直接用jquery操作------------------
+  $('[switch]').on('change', function() {
+    console.log($(this).val());
+  })
 
 </script>
 </html>
