@@ -26,6 +26,9 @@ const versionIncrements = [
   'prerelease'
 ]
 
+const corePkgName = 'jq-mvvm'
+const pkgName = '@jqvm'
+
 const inc = i => semver.inc(currentVersion, i, preId)
 const bin = name => path.resolve(__dirname, '../node_modules/.bin/' + name)
 const run = (bin, args, opts = {}) =>
@@ -147,8 +150,8 @@ function updateDeps(pkg, depType, version) {
   if (!deps) return
   Object.keys(deps).forEach(dep => {
     if (
-      dep === 'vue' ||
-      (dep.startsWith('@vue') && packages.includes(dep.replace(/^@vue\//, '')))
+      dep === corePkgName ||
+      (dep.startsWith(pkgName) && packages.includes(dep.replace(RegExp(`^${pkgName}\/`), '')))
     ) {
       console.log(
         chalk.yellow(`${pkg.name} -> ${depType} -> ${dep}@${version}`)
