@@ -68,17 +68,21 @@
 
     constructor (props) {
       super(props);
-      this.state = false;
+      this.open = false;
+    }
+
+    setOpen(val) {
+      this.open = val;
+      this.onChange(this.open);
+      this.update();
     }
 
     writeValue(value) {
-      this.state = value && value !== 'false';
+      this.open = value && value !== 'false';
     }
 
     buttonClick = () => {
-      this.state = !this.state;
-      this.onChange(this.state);
-      this.update();
+      this.setOpen(!this.open);
     }
     render () {
       const switchWrapperStyle = {
@@ -97,7 +101,7 @@
         borderRadius: '10px',
         transition: 'margin 0.15s, background-color 0.3s'
       }
-      if (this.state) {
+      if (this.open) {
         switchHandlerStyle.marginLeft = '15px';
         switchHandlerStyle.backgroundColor = '#3587ff';
       } else {
@@ -132,8 +136,7 @@
   })
 
   $('#reset').on('click', function () {
-    $('#test-switch').customSwitch('state', false);
-    $('#test-switch').customSwitch('update');
+    $('#test-switch').customSwitch('setOpen', false);
   })
 
 </script>
