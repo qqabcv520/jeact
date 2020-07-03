@@ -2,9 +2,7 @@ import { VNode } from './v-node';
 import { DomOperate } from './dom';
 import { Differentiator } from './diff';
 
-export interface Type<T> extends Function {
-  new (...args: any[]): T;
-}
+export type Type<T> = new (...args: any[]) => T;
 
 export interface ComponentProps {
   el?: HTMLElement;
@@ -35,6 +33,16 @@ export abstract class Component {
     }
   }
 
+  static create<T extends Component>(componentType: Type<T>, props: Partial<T>, el?: HTMLElement | string): T {
+    const dom = typeof el === 'string' ? document.querySelector(el) : el;
+    const component = new componentType({...props});
+    component.el = dom as HTMLElement;
+    component.beforeMount();
+    component.mount();
+    component.mounted();
+    return component;
+  }
+
   protected mount() {
     this.vNode = this.render();
     const node = this.dom.createElement(this.vNode, this.update.bind(this));
@@ -42,11 +50,13 @@ export abstract class Component {
   }
 
   appendToEl(node: Node) {
-    this.el && node && this.dom.appendChild(this.el, node);
+    if (this.el && node) {
+      this.dom.appendChild(this.el, node);
+    }
   }
 
   reappendToEl(oldNode: Node, newNode: Node) {
-    if (oldNode == newNode || this.el == null) {
+    if (oldNode === newNode || this.el == null) {
       return;
     }
     const parentNode = this.dom.parentNode(oldNode);
@@ -58,7 +68,6 @@ export abstract class Component {
   }
 
   update() {
-
     if (this.updateFlag) {
       return;
     }
@@ -70,7 +79,7 @@ export abstract class Component {
         return;
       }
       this.runDiff();
-    })
+    });
   }
 
   runDiff() {
@@ -84,38 +93,35 @@ export abstract class Component {
     return newVNode;
   }
 
-  beforeMount() {};
+  beforeMount() {
+  }
 
-  mounted() {};
+  mounted() {
+  }
 
-  beforeUpdate() {};
+  beforeUpdate() {
+  }
 
-  updated() {};
+  updated() {
+  }
 
-  destroy() {};
+  destroy() {
+  }
 
   render(): VNode | null {
     return null;
-  };
-
-  static create<T extends Component>(componentType: Type<T>, props: Partial<T>, el?: HTMLElement | string): T {
-    const dom = typeof el === 'string' ? document.querySelector(el) : el;
-    const component = new componentType({...props});
-    component.el = dom as HTMLElement;
-    component.beforeMount();
-    component.mount();
-    component.mounted();
-    return component;
   }
-}
 
+}
 
 
 export abstract class ValueComponent<T> extends Component {
 
-  abstract writeValue(value: string): void;
+
   readonly el: HTMLInputElement;
   protected valueChange: (options: T) => void;
+
+  abstract writeValue(value: string): void;
 
   protected constructor(props: ValueComponentProps<T>) {
     super(props);
@@ -147,14 +153,13 @@ export abstract class ValueComponent<T> extends Component {
 
   appendToEl(node: HTMLElement) {
     const parentNode = this.el && this.dom.parentNode(this.el);
-    if (parentNode != null) {
-      node && this.dom.insertBefore(parentNode, node, this.el);
+    if (parentNode && node) {
+      this.dom.insertBefore(parentNode, node, this.el);
       this.el.hidden = true;
     }
   }
 
 }
-
 
 
 export class FunctionComponent<T> extends Component {

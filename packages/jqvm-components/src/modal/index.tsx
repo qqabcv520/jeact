@@ -77,7 +77,6 @@ export class ModalComponent<T extends Component> extends Component {
           { Buttons && <Buttons/>}
         </div>
       </div>
-
     );
   }
 }

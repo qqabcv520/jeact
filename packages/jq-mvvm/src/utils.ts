@@ -15,7 +15,7 @@ export function getKebabCase(str: string): string {
     .replace(reg3, ($, $1) => '-' + $1.toLowerCase());
 }
 
-export interface mountComponentArgs {
+export interface MountComponentArgs {
   name: string;
   componentType: Type<Component>;
   props: string[];
@@ -23,7 +23,7 @@ export interface mountComponentArgs {
 }
 
 // 挂载为jquery插件
-export function mountComponent ({name, componentType, props, $ = window['jQuery']}: mountComponentArgs) {
+export function mountComponent ({name, componentType, props, $ = window['jQuery']}: MountComponentArgs) {
   if ($ == null) {
     return;
   }
@@ -58,9 +58,9 @@ export function mountComponent ({name, componentType, props, $ = window['jQuery'
       const propsValue = (props || []).reduce((pre, curr) => {
         pre[curr] = $selected.attr(getKebabCase(curr));
         return pre;
-      }, {})
+      }, {});
       $selected[name](propsValue);
-    })
+    });
   });
 
 }

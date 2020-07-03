@@ -3,13 +3,11 @@ import { Component, FunctionComponent } from './component';
 
 export class DomOperate {
 
-  constructor(private context: Component) {
-
-  }
+  constructor(private context: Component) { }
 
   createElement(vNode: VText, rootUpdate: () => void): Text;
   createElement(vNode: VDom, rootUpdate: () => void): HTMLElement;
-  createElement(vNode: VNode, rootUpdate: () => void): Node
+  createElement(vNode: VNode, rootUpdate: () => void): Node;
   createElement(vNode: VNode, rootUpdate: () => void): any {
     if (isVComponent(vNode)) {
       vNode.component = Component.create(vNode.type, {
@@ -20,8 +18,8 @@ export class DomOperate {
       });
       vNode.el = vNode.component.vNode?.el;
       return vNode.el;
-    } else if(isVFunction(vNode)) {
-      vNode.component = Component.create(FunctionComponent, {
+    } else if (isVFunction(vNode)) {
+      vNode.component = Component.create<FunctionComponent<any>>(FunctionComponent, {
         renderFunction: vNode.type,
         functionProps: {
           ...vNode.attributes,
@@ -32,7 +30,7 @@ export class DomOperate {
       });
       vNode.el = vNode.component.vNode?.el;
       return vNode.el;
-    } else if(isVDom(vNode)) {
+    } else if (isVDom(vNode)) {
       const el: HTMLElement = document.createElement(vNode.type);
       vNode.el = el;
       Object.keys(vNode.handles).forEach(key => {
@@ -44,7 +42,7 @@ export class DomOperate {
         const value = vNode.attributes[key];
         this.setAttribute(el, key, value);
       });
-      vNode.children && vNode.children.forEach(value => {
+      vNode.children?.forEach(value => {
         const node = this.createElement(value, rootUpdate);
         if (node) {
           el.appendChild(node);
@@ -101,20 +99,20 @@ export class DomOperate {
           this.removeAttribute(el, key, oldValue);
         }
       });
-    } else if (isVText(newVNode) && isVText(oldVNode) && newVNode.content != oldVNode.content) {
+    } else if (isVText(newVNode) && isVText(oldVNode) && newVNode.content !== oldVNode.content) {
       newVNode.el.data = newVNode.content;
     }
   }
 
   updateVText(el: Node, newVNode: VText, oldVNode: VText) {
-    if (newVNode.content != oldVNode.content) {
+    if (newVNode.content !== oldVNode.content) {
       newVNode.el.data = newVNode.content;
     }
   }
 
 
   setAttribute(el: Element, attrName: string, attrValue: any, oldValue: any = {}) {
-    if (el instanceof HTMLInputElement &&  el.type === 'checkbox' && attrName === 'checked') {
+    if (el instanceof HTMLInputElement && el.type === 'checkbox' && attrName === 'checked') {
       el['checked'] = attrValue;
       return;
     }
@@ -147,11 +145,13 @@ export class DomOperate {
     if (attrName === 'ref') {
       this.context.refs[attrValue] = el;
     }
-    attrValue && attrValue !== 0 && el.setAttribute(attrName, String(attrValue === true ? '' : attrValue));
+    if (attrValue && attrValue !== 0) {
+      el.setAttribute(attrName, String(attrValue === true ? '' : attrValue));
+    }
   }
 
   removeAttribute(el: HTMLElement, attrName: string, oldValue: any = {}) {
-    if (el instanceof HTMLInputElement &&  el.type === 'checkbox' && attrName === 'checked') {
+    if (el instanceof HTMLInputElement && el.type === 'checkbox' && attrName === 'checked') {
       el[attrName] = false;
       return;
     }
@@ -175,8 +175,8 @@ export class DomOperate {
   // 移除el的所有子节点
   removeChildren(el: Node) {
     const children = el.childNodes;
-    for (let i = children.length-1; i >= 0; i--) {
-      this.removeChild(el, children[i])
+    for (let i = children.length - 1; i >= 0; i--) {
+      this.removeChild(el, children[i]);
     }
   }
 
@@ -206,14 +206,16 @@ export class DomOperate {
       this.callDestroy(vNode);
     }
     const pNode = this.parentNode(vNode.el);
-    pNode && this.removeChild(pNode, vNode.el);
+    if (pNode) {
+      this.removeChild(pNode, vNode.el);
+    }
   }
 
   // 递归销毁所有子节点
-  callDestroy (vnode: VNode) {
+  callDestroy(vnode: VNode) {
     if (isVElement(vnode)) {
       for (let i = 0; i < vnode.children.length; ++i) {
-        this.callDestroy(vnode.children[i])
+        this.callDestroy(vnode.children[i]);
       }
     }
     if (isVComponent(vnode)) {
