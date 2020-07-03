@@ -99,13 +99,13 @@
         height: '100%',
         backgroundColor: '#3587ff',
         borderRadius: '10px',
-        transition: 'margin 0.15s, background-color 0.3s'
+        transition: 'transform 0.15s, background-color 0.3s'
       }
       if (this.open) {
-        switchHandlerStyle.marginLeft = '15px';
+        switchHandlerStyle.transform = 'translateX(15px)';
         switchHandlerStyle.backgroundColor = '#3587ff';
       } else {
-        switchHandlerStyle.marginLeft = '0';
+        switchHandlerStyle.transform = 'translateX(0)';
         switchHandlerStyle.backgroundColor = '#999';
       }
       return el('div', {style: switchWrapperStyle, onclick: this.buttonClick},
