@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "sourceMap": true, //代码映射
         "noImplicitAny": false, //强类型检查
         "noImplicitThis": true, // 禁止this为any类型
         "module": "esnext", //组织代码方式
@@ -20,7 +19,6 @@
         "types": ["node", "jquery"],
         "jsx": "react",
         "jsxFactory": "createVNode",
-        "declaration": true,
         "lib": [
             "es2015",
             "es2016.array.include",
@@ -32,8 +30,5 @@
             "@jqvm/*": ["packages/*"],
             "jq-mvvm": ["packages/jq-mvvm"]
         }
-    },
-    "include": [
-        "./packages/*/src/**/*"
-    ]
+    }
 }

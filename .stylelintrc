@@ -1,0 +1,28 @@
+{
+    "extends": [ "stylelint-config-standard" ],
+    "plugins": [
+        "stylelint-declaration-block-no-ignored-properties"
+    ],
+    "rules": {
+        "plugin/declaration-block-no-ignored-properties": true,
+        "selector-max-id": 0,
+        "selector-class-pattern": ["^[a-z\\-]+\\(?", {
+            "resolveNestedSelectors": true
+        }],
+        "rule-empty-line-before": ["always", {
+            "except": "inside-block",
+            "ignore": "after-comment"
+        }],
+        "selector-pseudo-element-no-unknown": [
+            true,
+            {
+                "ignorePseudoElements": ["ng-deep"]
+            }
+        ],
+        "no-descending-specificity": null,
+        "selector-type-no-unknown": null,
+        "function-name-case": null,
+        "function-whitespace-after": null
+    },
+    "ignoreFiles": ["src/assets/**/*"]
+}

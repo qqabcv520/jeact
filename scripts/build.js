@@ -3,18 +3,20 @@ const fs = require('fs-extra');
 const path = require('path')
 const { fuzzyMatchTarget, packagesName: allTargets } = require('./utils')
 const args = require('minimist')(process.argv.slice(2))
-const packagesName = args._
-const target = args.target || args.t
+
+const targets = args._
+const formats = args.formats || args.f || 'umd'
 const buildAllMatching = args.all || args.a
 const sourceMap = args.sourcemap || args.s
-const type = args.type
+const type = args.type || args.t
+const prod = args.prod || args.p
 
 
 
-if (!packagesName.length) {
+if (!targets.length) {
   buildAll(allTargets)
 } else {
-  buildAll(fuzzyMatchTarget(packagesName, buildAllMatching))
+  buildAll(fuzzyMatchTarget(targets, buildAllMatching))
 }
 
 
@@ -25,20 +27,22 @@ async function buildAll(names) {
 }
 
 
-async function build(packageName) {
+async function build(target) {
   execa(
-    'cross-env',
+    'rollup',
     [
-      `PACKAGE_NAME=${packageName}`,
-      `TARGET=${target || 'umd'}`,
-      ...(sourceMap ? [`SOURCE_MAP=true`] : []),
-      ...(type ? [`TYPE=true`] : []),
-      'webpack',
-      '--mode=production'
+      '-c',
+      '--environment',
+      [
+        `NODE_ENV:${prod ? 'production' : 'development'}`,
+        `TARGET:${target}`,
+        formats ? `FORMATS:${formats}` : ``,
+        type ? `TYPES:true` : ``,
+        sourceMap ? `SOURCE_MAP:true` : ``
+      ]
+      .filter(Boolean)
+      .join(',')
     ],
-    {
-      stdio: 'inherit'
-    }
+    { stdio: 'inherit' }
   )
-
 }
