@@ -1,16 +1,5 @@
 import { Component, FunctionComponent, Type } from './component';
 
-const handleTypes = [
-  'onclick', 'onClick',
-  'onchange', 'onChange',
-  'oninput', 'onInput',
-  'onfocus', 'onFocus',
-  'onblur', 'onBlur',
-  'onkeydown', 'onKeydown',
-  'onkeyup', 'onKeyup'
-];
-// const inputAttributes = ['checked'];
-
 
 export abstract class VNode {
   el: Node;
@@ -82,11 +71,11 @@ export function createVNode(type: string | Function | Type<Component>, props: { 
   let handle = {};
   let attribute = {};
   if (props) {
-    handle = Object.keys(props).filter(value => handleTypes.includes(value)).reduce((pre, curr) => {
+    handle = Object.keys(props).filter(value => value.startsWith('on')).reduce((pre, curr) => {
       pre[curr] = props[curr];
       return pre;
     }, {});
-    attribute = Object.keys(props).filter(value => !handleTypes.includes(value)).reduce((pre, curr) => {
+    attribute = Object.keys(props).filter(value => !value.startsWith('on')).reduce((pre, curr) => {
       pre[curr] = props[curr];
       return pre;
     }, {});
