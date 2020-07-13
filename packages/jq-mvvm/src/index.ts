@@ -6,6 +6,6 @@
  */
 
 
-export { mountComponent } from './utils';
-export { Component, ValueComponent, Type, ComponentProps, ValueComponentProps } from './component';
-export { VNode, VDom, VText, createVNode, isVNode } from './v-node';
+export * from './utils';
+export * from './component';
+export * from './v-node';
