@@ -12,6 +12,6 @@
     "dist"
   ],
   "peerDependencies": {
-    "jquery": "^3.5.0"
+    "jquery": "^3.5.1"
   }
 }
