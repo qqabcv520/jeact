@@ -5,7 +5,7 @@ import { terser } from "rollup-plugin-terser";
 import postcss from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
 import commonjs from '@rollup/plugin-commonjs'
-// import { nodeResolve } from '@rollup/plugin-node-resolve'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
 
 if (!process.env.TARGET) {
   throw new Error('TARGET package must be specified via --environment flag.')
@@ -20,7 +20,7 @@ const pkg = require(resolve(`package.json`))
 // 对多个formats，只执行一次检查
 let hasTSChecked = false
 
-const defaultFormats = ['es', 'umd']
+const defaultFormats = ['es', 'iife']
 const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(',')
 const packageFormats = inlineFormats || defaultFormats
 
@@ -38,7 +38,7 @@ function createConfig(format) {
     sourcemap: enableSourceMap,
     externalLiveBindings: false,
     format,
-    name,
+    name: getUpperCamelCase(name),
   }
 
   const isBrowser = ['umd', 'iife', 'amd', 'system'].includes(format)
@@ -80,9 +80,9 @@ function createConfig(format) {
     commonjs({
       sourceMap: false
     }),
-    // nodeResolve({
-    //   preferBuiltins: true
-    // }),
+    nodeResolve({
+      preferBuiltins: true
+    }),
   ];
   if (enableProd) {
     plugins.push(
@@ -95,11 +95,19 @@ function createConfig(format) {
       })
     );
   }
-
   return {
     input: resolve('index.ts'),
-    external,
     plugins,
+    external,
     output,
   }
+}
+
+
+/**
+ * 短横线/下划线/小驼峰 转 大驼峰命名(UpperCamelCase)
+ */
+export function getUpperCamelCase(str) {
+  const reg = /(^|-|_)(\w)/g;
+  return str.replace(reg, ($, $1, $2) => $2.toUpperCase());
 }

@@ -5,7 +5,7 @@ const { fuzzyMatchTarget, packagesName: allTargets } = require('./utils')
 const args = require('minimist')(process.argv.slice(2))
 
 const targets = args._
-const formats = args.formats || args.f || 'umd'
+const formats = args.formats || args.f
 const buildAllMatching = args.all || args.a
 const sourceMap = args.sourcemap || args.s
 const type = args.type || args.t

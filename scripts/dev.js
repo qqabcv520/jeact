@@ -14,7 +14,7 @@ execa(
     '--environment',
     [
       `TARGET:${target}`,
-      `FORMATS:${formats || 'umd'}`,
+      `FORMATS:${formats || 'iife'}`,
       sourceMap ? `SOURCE_MAP:true` : ``
     ]
     .filter(Boolean)
