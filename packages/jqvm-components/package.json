@@ -9,7 +9,8 @@
   "dependencies": {
     "classname": "^0.0.0",
     "sortablejs": "^1.10.2",
-    "jq-mvvm": "~0.1.1"
+    "jq-mvvm": "~0.1.1",
+    "jquery": "^3.5.0"
   },
   "devDependencies": {
     "@types/sortablejs": "^1.10.4"
