@@ -1,6 +1,6 @@
 
 import { ValueComponentProps, ValueComponent, VNode, mountComponent, createVNode } from 'jq-mvvm';
-import './index.less'
+import './index.less';
 
 export interface SingleCascaderOption {
   value: any;
@@ -58,7 +58,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
 
   get columns(): SingleCascaderOption[][] {
     let list = this.convertedOptions;
-    let result = [list];
+    const result = [list];
     for (let i = 0; this.selectedIndexes[i] != null; i++) {
       const selectedIndex = this.selectedIndexes[i];
       if (list[selectedIndex] && list[selectedIndex].children && list[selectedIndex].children.length > 0) {
@@ -69,7 +69,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
       }
     }
     return result;
-  };
+  }
 
   get selectedOptions(): SingleCascaderOption[] {
     return this.leafOptions.filter(value => value.selected);
@@ -98,7 +98,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
 
   // 组件声明周期hook，当组件挂载DOM后调用
   mounted() {
-    document.addEventListener('click',(e: any) => {
+    document.addEventListener('click', (e: any) => {
       if (this.refs.popup) {
         const path = e.path || (e.composedPath && e.composedPath());
         if (!(this.refs.popup as HTMLElement).contains(e.target) && !path.includes(this.refs.popup)) {
@@ -117,7 +117,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   // 选择
   selectOption(option: SingleCascaderOption, level?: number, index?: number) {
     if (level != null && index != null) {
-      this.nextLevel(level, index)
+      this.nextLevel(level, index);
     } else {
       this.selectedIndexes = this.getSelectedIndexes(option);
     }
@@ -140,10 +140,10 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   }
 
   getSelectedIndexes(option: SingleCascaderOption): number[] {
-    let indexes = [];
+    const indexes = [];
     let selectedOption = option;
     while (selectedOption.parent) {
-      const index = selectedOption.parent.children.findIndex(val => String(val.value) === String(selectedOption.value))
+      const index = selectedOption.parent.children.findIndex(val => String(val.value) === String(selectedOption.value));
       selectedOption = selectedOption.parent;
       indexes.unshift(index);
     }
@@ -154,12 +154,12 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   }
 
   getSelectedString(option: SingleCascaderOption): string {
-    let stringArr = [];
+    const stringArr = [];
     let selectedOption = option;
     while (selectedOption.parent) {
-      const option = selectedOption.parent.children.find(val => String(val.value) === String(selectedOption.value))
+      const o = selectedOption.parent.children.find(val => String(val.value) === String(selectedOption.value));
       selectedOption = selectedOption.parent;
-      stringArr.unshift(option);
+      stringArr.unshift(o);
     }
     // 获取第一级index
     const firstOption = this.convertedOptions.find(val => String(val.value) === String(selectedOption.value));
@@ -177,10 +177,10 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     this.selectedString = '';
     this.update();
     this.onChange([]);
-  };
+  }
 
   searchInput = (e: InputEvent) => {
-    this.searchText = e.target['value']
+    this.searchText = e.target['value'];
     this.update();
   }
 
@@ -208,8 +208,8 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
       };
     });
     this.openSearchPopup();
-    this.update()
-  };
+    this.update();
+  }
 
   // 递归搜索children
   searchChildren(options: SingleCascaderOption[], searchText: string): SingleCascaderOption[][] {
@@ -248,20 +248,20 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   // 打开搜索弹窗
   openSearchPopup = () => {
     this.showSearch = true;
-    this.update()
-  };
+    this.update();
+  }
 
   // 关闭搜索弹窗
   closeSearchPopup() {
     this.showSearch = false;
     this.update();
-  };
+  }
 
   openPopup = (e: Event) => {
     e.stopPropagation();
     this.open = true;
     this.update();
-  };
+  }
 
   closePopup() {
     this.open = false;
@@ -269,7 +269,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     this.searchOptions = [];
     this.closeSearchPopup();
     this.update();
-  };
+  }
 
   switchCommon = () => {
     this.showCommon = !this.showCommon;
@@ -294,7 +294,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
       };
       obj.children = this.convert(option[childrenField] || [], valueField, labelField, childrenField, obj, value);
       return obj;
-    })
+    });
   }
 
   // 获取所有叶子节点
@@ -330,19 +330,19 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
   render() {
     let popup: VNode;
     if (this.open) {
-      popup = <div class="bgx-popup" ref="popup">
+      popup = <div class='bgx-popup' ref='popup'>
         {/*搜索栏*/}
-        <div class="bgx-search-bar">
-          <div class="bgx-search-input" ref="search">
-            <div class="input-group">
-              <input type="text" class="form-control input-sm" value={this.searchText} placeholder="请输入搜索关键字"
+        <div class='bgx-search-bar'>
+          <div class='bgx-search-input' ref='search'>
+            <div class='input-group'>
+              <input type='text' class='form-control input-sm' value={this.searchText} placeholder='请输入搜索关键字'
                      oninput={(e) => this.searchInput(e)} onkeydown={(e) => this.searchKeydown(e)} onfocus={this.openSearchPopup}/>
-              <span class="input-group-btn">
-                <button class="btn btn-primary btn-sm" type="button" onclick={this.searchChange}>搜索</button>
+              <span class='input-group-btn'>
+                <button class='btn btn-primary btn-sm' type='button' onclick={this.searchChange}>搜索</button>
               </span>
             </div>
-            {this.searchText && this.showSearch && (<div class="bgx-search-popup">
-              {this.searchOptions.length > 1 ? <div class="bgx-search-options">
+            {this.searchText && this.showSearch && (<div class='bgx-search-popup'>
+              {this.searchOptions.length > 1 ? <div class='bgx-search-options'>
                 {this.searchOptions.map(value =>
                   <div key={value.ids} class={[
                     'bgx-search-option',
@@ -351,18 +351,18 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
                     <span dangerouslySetInnerHTML={value.html}></span>
                   </div>
                 )}
-              </div> : <div class="no-search-result">暂无搜索结果</div>}
+              </div> : <div class='no-search-result'>暂无搜索结果</div>}
             </div>)}
           </div>
-          <button class="btn btn-default btn-sm" type="button" onclick={this.clear}>清空</button>
+          <button class='btn btn-default btn-sm' type='button' onclick={this.clear}>清空</button>
         </div>
         {/*常用选择*/}
-        <div class="bgx-commonly-used">
-          <div class="bgx-commonly-used-head">
+        <div class='bgx-commonly-used'>
+          <div class='bgx-commonly-used-head'>
             <label>常用选择</label>
             <i onclick={this.switchCommon}>{ this.showCommon ? '-' : '+'}</i>
           </div>
-          <div class="bgx-commonly-used-options">
+          <div class='bgx-commonly-used-options'>
             {this.showCommon && this.commonOptions.length > 1 && this.commonOptions.map(value =>
               <label key={value.value} class={[
                 'bgx-label bgx-commonly-used-option',
@@ -374,9 +374,9 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
           </div>
         </div>
         {/*options*/}
-        <div class="bgx-options">
+        <div class='bgx-options'>
           {this.columns.map((value, level) => (
-            value && <div class="bgx-column">
+            value && <div class='bgx-column'>
               {value.map((value1, index) =>
                 <div class={[
                     'bgx-option',
@@ -384,7 +384,7 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
                     index === this.selectedIndexes[level] ? 'bgx-option-selected' : ''
                   ].join(' ')}
                   onclick={() => this.selectOption(value1, level, index)}>
-                  <div class="bgx-option-text" title={value1.label}>{value1.label}</div>
+                  <div class='bgx-option-text' title={value1.label}>{value1.label}</div>
                 </div>
               )}
             </div>
@@ -394,10 +394,10 @@ export class SingleCascaderComponent extends ValueComponent<any[]> {
     }
 
     return (
-      <div class="bgx-single-cascader" ref="selector">
-        <div class="input-group">
-          <input type="text" class="form-control input-sm bgx-input" value={this.selectedString} placeholder={this.placeholder} onclick={this.openPopup}
-                 aria-describedby="basic-addon2" readonly/>
+      <div class='bgx-single-cascader' ref='selector'>
+        <div class='input-group'>
+          <input type='text' class='form-control input-sm bgx-input' value={this.selectedString} placeholder={this.placeholder}
+                 onclick={this.openPopup} aria-describedby='basic-addon2' readonly/>
         </div>
         {popup}
       </div>
@@ -410,5 +410,5 @@ mountComponent({
   name: 'singleCascader',
   componentType: SingleCascaderComponent,
   props: ['valueField', 'labelField', 'childrenField', 'placeholder', 'cacheName'],
-})
+});
 

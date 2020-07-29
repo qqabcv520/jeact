@@ -1,14 +1,13 @@
-import './index.less'
-import JQuery from 'jquery';
+import './index.less';
 import { Component, Type, VNode, isVNode, createVNode, ComponentProps } from 'jq-mvvm';
 
 export interface ModalComponentProps<T extends Component> extends ComponentProps {
-  content: Type<T>,
+  content: Type<T>;
   width: string;
   contentProps: any;
 }
 
-export class ModalComponent<T extends Component> extends Component {
+export class ModalComponent<T extends Component = any> extends Component {
   content: Type<T> | (() => VNode);
   style: string;
   contentProps: Partial<T>;
@@ -17,8 +16,8 @@ export class ModalComponent<T extends Component> extends Component {
   title: VNode | string = '标题';
 
   buttons: VNode | VNode[];
-  onCancel: () => void;
-  onOk: () => void;
+  onCancel: (instance: T) => void;
+  onOk: (instance: T) => Promise<boolean | void> | boolean | void;
 
   constructor(
     args: ModalComponentProps<Component>
@@ -34,16 +33,28 @@ export class ModalComponent<T extends Component> extends Component {
 
   readonly cancelClick = () => {
     this.close();
-  };
+  }
 
   readonly closeClick = () => {
     this.close();
   }
 
+  readonly  onOkClick = async () => {
+    if (this.onOk) {
+      let result: boolean | void;
+      try {
+        result = await this.onOk(this.refs.instance as T);
+      } catch (e) { }
+      if (result !== false) {
+        this.close();
+      }
+    }
+  }
+
   close() {
     this.dom.removeChild(this.el, this.vNode.el);
     if (this.onCancel) {
-      this.onCancel();
+      this.onCancel(this.refs.instance as T);
     }
   }
 
@@ -51,29 +62,29 @@ export class ModalComponent<T extends Component> extends Component {
     const Title = () => {
       if (typeof this.title  === 'string') {
         return  (
-          <div class="bgx-modal-title">
-            <span class="bgx-modal-title-text">{this.title}</span>
-            <i class="topsales tps-icon-close bgx-modal-close" onclick={this.closeClick}/>
+          <div class='bgx-modal-title'>
+            <span class='bgx-modal-title-text'>{this.title}</span>
+            <i class='fa fa-times bgx-modal-close' onclick={this.closeClick}/>
           </div>
         );
-      } else if(isVNode(this.title)) {
+      } else if (isVNode(this.title)) {
         return this.title;
       }
     };
     const Content = this.content;
     const Buttons = () => {
       return this.buttons !== undefined ? this.buttons : (
-        <div class="bgx-modal-buttons">
-          <button class="btn btn-default" type="button" onclick={this.cancelClick}>取消</button>
-          <button class="btn btn-primary" type="button" onclick={this.onOk}>确定</button>
+        <div class='bgx-modal-buttons'>
+          <button class='btn btn-default' type='button' onclick={this.cancelClick}>取消</button>
+          <button class='btn btn-primary' type='button' onclick={this.onOkClick}>确定</button>
         </div>
       );
-    }
+    };
     return (
-      <div ref="modal" class="bgx-modal" onclick={this.maskClick}>
-        <div class="bgx-modal-wrapper" style={this.style}>
+      <div ref='modal' class='bgx-modal' onclick={this.maskClick}>
+        <div class='bgx-modal-wrapper' style={this.style}>
           { Title && <Title /> }
-          { Content && <Content {...this.contentProps} /> }
+          { Content && <Content ref='instance' {...this.contentProps} /> }
           { Buttons && <Buttons/>}
         </div>
       </div>
@@ -85,7 +96,7 @@ export class ModalComponent<T extends Component> extends Component {
 export function mountModal<T extends Component>(args: MountModalArgs<T>) {
   const {
     name,
-    $ = JQuery,
+    $ = jQuery,
     ...restProp
   } = args;
   $[name] = function(contentProps: Partial<T>) {
@@ -93,12 +104,12 @@ export function mountModal<T extends Component>(args: MountModalArgs<T>) {
       ...restProp,
       ...contentProps,
     }, document.body);
-  }
+  };
 }
 
 
-export interface MountModalArgs<T extends Component> extends Partial<ModalComponent<T>>{
+export interface MountModalArgs<T extends Component> extends Partial<ModalComponent<T>> {
   name: string;
-  title: string
+  title: string;
   $?: JQueryStatic;
 }

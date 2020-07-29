@@ -1,4 +1,4 @@
-import './index.less'
+import './index.less';
 import { ValueComponentProps, ValueComponent, VNode, mountComponent, createVNode } from 'jq-mvvm';
 
 export interface PmSelectorOption {
@@ -57,7 +57,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
       if (res && res.success) {
         this.options = res.result;
       }
-    })
+    });
   }
 
   convertedOptions: PmSelectorOption[] = [];
@@ -74,7 +74,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
 
   get columns(): PmSelectorOption[][] {
     let list = this.convertedOptions;
-    let result = [list];
+    const result = [list];
     for (let i = 0; this.selectedIndexes[i] != null; i++) {
       const selectedIndex = this.selectedIndexes[i];
       if (list[selectedIndex] && list[selectedIndex].children && list[selectedIndex].children.length > 0) {
@@ -85,7 +85,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
       }
     }
     return result;
-  };
+  }
 
   // 获取被勾选的所有叶子节点
   get checkedOptions(): PmSelectorOption[] {
@@ -96,7 +96,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
       const currChecked = options.filter(value => (!value.children || !value.children.length) && value.checked);
       checkedOptions = checkedOptions.concat(currChecked);
       options = options.filter(value => value.children && value.children.length)
-        .flatMap(value => value.children) // 搜索待搜索列表
+        .flatMap(value => value.children); // 搜索待搜索列表
     }
     return checkedOptions;
   }
@@ -124,7 +124,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
   writeValue(value: string) {
     this.value = value ? value.split(',') : [];
     if (this.convertedOptions != null) {
-      this.leafOptions.forEach(value1 => value1.checked = this.value.includes(value1.value))
+      this.leafOptions.forEach(value1 => value1.checked = this.value.includes(value1.value));
       this.update();
     }
   }
@@ -136,7 +136,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
 
   // 组件声明周期hook，当组件挂载DOM后调用
   mounted() {
-    document.addEventListener('click',(e: any) => {
+    document.addEventListener('click', (e: any) => {
       if (this.refs.popup) {
         const path = e.path || (e.composedPath && e.composedPath());
         if (!(this.refs.popup as HTMLElement).contains(e.target) && !path.includes(this.refs.popup)) {
@@ -156,13 +156,13 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
   closeSearchPopup() {
     this.showSearch = false;
     this.update();
-  };
+  }
 
   // 打开搜索弹窗
   openSearchPopup = () => {
     this.showSearch = true;
-    this.update()
-  };
+    this.update();
+  }
 
   // 勾选
   checkOption(option: PmSelectorOption, checked: boolean) {
@@ -179,7 +179,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     const checked = e.target['checked'];
     this.commonOptions.forEach(value => this.checkOption(value, checked));
     this.update();
-  };
+  }
 
 
   leafChildren(options: PmSelectorOption[]): PmSelectorOption[] {
@@ -197,7 +197,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     });
     this.update();
     this.onChange([]);
-  };
+  }
 
   searchChange = (e: Event) => {
     this.searchText = e.target['value'];
@@ -206,25 +206,25 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     });
     this.checkSearchOption();
     this.update();
-  };
+  }
 
   searchCheckAll = (e) => {
     const checked = e.target['checked'];
     this.searchOptions.forEach(value => this.checkOption(value, checked));
     this.update();
-  };
+  }
 
   openPopup = (e: Event) => {
     e.stopPropagation();
     this.open = true;
     this.update();
-  };
+  }
 
   closePopup() {
     this.open = false;
     this.searchText = '';
     this.update();
-  };
+  }
 
   // 格式化外部option为内部option
   convert(
@@ -244,7 +244,7 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
       };
       obj.children = this.convert(option[childrenField] || [], valueField, labelField, childrenField, obj, values);
       return obj;
-    })
+    });
   }
 
   optionChange(e: Event, option: PmSelectorOption) {
@@ -318,71 +318,78 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     const checkedOptions = this.checkedOptions;
     let popup: VNode;
     if (this.open) {
-      popup = <div class="ps-popup" ref="popup">
+      popup = <div class='ps-popup' ref='popup'>
         {/*搜索栏*/}
-        <div class="ps-search-bar">
-          <div class="ps-search-input" ref="search">
-            <input type="text" class="form-control input-sm" value={this.searchText} oninput={this.searchChange} onfocus={this.openSearchPopup} placeholder="请输入搜索关键字"/>
-            {this.searchText && this.showSearch && (<div class="ps-search-popup" >
-              <label class="ps-label">
-                  <input class="ps-checkbox" type="checkbox" checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>
+        <div class='ps-search-bar'>
+          <div class='ps-search-input' ref='search'>
+            <input type='text' class='form-control input-sm' value={this.searchText} oninput={this.searchChange}
+                   onfocus={this.openSearchPopup} placeholder='请输入搜索关键字'/>
+            {this.searchText && this.showSearch && (<div class='ps-search-popup' >
+              <label class='ps-label'>
+                  <input class='ps-checkbox' type='checkbox' checked={this.searchCheckedAll} onchange={this.searchCheckAll}/>
                   全选
               </label>
-                <div class="ps-label ps-search-options">
+                <div class='ps-label ps-search-options'>
                   { this.searchOptions.map(value =>
-                    <label key={value.value} class="ps-label ps-search-option">
-                      <input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
-                      <span dangerouslySetInnerHTML={value.label.replace(this.searchText, str => str.fontcolor("#1481db"))}>
+                    <label key={value.value} class='ps-label ps-search-option'>
+                      <input class='ps-checkbox' type='checkbox' checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
+                      <span dangerouslySetInnerHTML={value.label.replace(this.searchText, str => str.fontcolor('#1481db'))}>
                       </span>
                     </label>
                   )}
                 </div>
             </div>)}
           </div>
-          <button class="btn btn-default btn-sm" type="button" onclick={this.clear}>清空</button>
+          <button class='btn btn-default btn-sm' type='button' onclick={this.clear}>清空</button>
         </div>
         {/*常用选择*/}
-        <div class="ps-commonly-used">
-          <label class="ps-label">
-            <input class="ps-checkbox" type="checkbox" checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>
+        <div class='ps-commonly-used'>
+          <label class='ps-label'>
+            <input class='ps-checkbox' type='checkbox' checked={this.commonCheckedAll} onchange={this.commonCheckAll}/>
             常用选择
           </label>
-          <div class="ps-commonly-used-options">
+          <div class='ps-commonly-used-options'>
             {this.commonOptions.map(value =>
-              <label key={value.value} class="ps-label ps-commonly-used-option">
-                <input class="ps-checkbox" type="checkbox" checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
+              <label key={value.value} class='ps-label ps-commonly-used-option'>
+                <input class='ps-checkbox' type='checkbox' checked={value.checked} onchange={(e) => this.optionChange(e, value)}/>
                 {value.label}
               </label>
             )}
           </div>
         </div>
         {/*options*/}
-        <div class="ps-options">
+        <div class='ps-options'>
           {this.columns.map((value, level) => (
-            value && <div class="ps-column">
+            value && <div class='ps-column'>
               {value.map((value1, index) =>
                 <div
-                  class={['ps-option', value1.children && value1.children.length > 0 ? 'ps-option-next' : '', index === this.selectedIndexes[level] ? 'ps-option-selected' : ''].join(' ')}
+                  class={['ps-option',
+                    value1.children && value1.children.length > 0
+                      ? 'ps-option-next'
+                      : '',
+                    index === this.selectedIndexes[level]
+                      ? 'ps-option-selected'
+                      : ''].join(' ')}
                   onclick={() => this.nextLevel(level, index)}>
-                  <input class="ps-checkbox" type="checkbox" onchange={(e) => this.optionChange(e, value1)}
+                  <input class='ps-checkbox' type='checkbox' onchange={(e) => this.optionChange(e, value1)}
                          checked={value1.checked}/>
-                  <div class="ps-option-text" title={value1.label}>{value1.label}</div>
+                  <div class='ps-option-text' title={value1.label}>{value1.label}</div>
                 </div>
               )}
             </div>
           ))}
         </div>
         {/*已选择计数*/}
-        <div class="ps-selected-cnt">
-          <span class="ps-selected-label">已选择</span>
+        <div class='ps-selected-cnt'>
+          <span class='ps-selected-label'>已选择</span>
           {String(checkedOptions.length)}/{this.leafOptions.length}
         </div>
         {/*已选择option*/}
-        <div class="ps-selected-tags">
+        <div class='ps-selected-tags'>
           {checkedOptions.map(value =>
-            <div class="ps-selected-tag">
+            <div class='ps-selected-tag'>
               {value.label}
-              <span class="ps-close" onclick={() => this.checkOption(value, false)}>×</span>
+              <span class='ps-close' onclick={() => this.checkOption(value, false)}>×</span>
             </div>
           )}
         </div>
@@ -390,11 +397,11 @@ export class PmSelectorComponent extends ValueComponent<any[]> {
     }
 
     return (
-      <div class="ps-selector" ref="selector">
-        <div class="input-group">
-          <input type="text" class="form-control input-sm ps-input" value={this.checkedOptionStr} placeholder={this.placeholder} onclick={this.openPopup}
-                 aria-describedby="basic-addon2" readonly/>
-          <span class="input-group-addon" id="basic-addon2">{this.checkedOptions.length}项</span>
+      <div class='ps-selector' ref='selector'>
+        <div class='input-group'>
+          <input type='text' class='form-control input-sm ps-input' value={this.checkedOptionStr} placeholder={this.placeholder}
+                 onclick={this.openPopup} aria-describedby='basic-addon2' readonly/>
+          <span class='input-group-addon' id='basic-addon2'>{this.checkedOptions.length}项</span>
         </div>
         {popup}
       </div>
@@ -409,4 +416,4 @@ mountComponent({
   name: 'pmSelector',
   componentType: PmSelectorComponent,
   props: ['psValueField', 'psLabelField', 'psChildrenField', 'psPlaceholder', 'psUrl', 'psCacheName'],
-})
+});
