@@ -17,6 +17,10 @@ export class DomOperate {
         rootUpdate,
       });
       vNode.el = vNode.component.vNode?.el;
+      Object.keys(vNode.attributes).forEach(key => {
+        const value = vNode.attributes[key];
+        this.setAttribute(vNode.component, key, value);
+      });
       return vNode.el;
     } else if (isVFunction(vNode)) {
       vNode.component = Component.create<FunctionComponent<any>>(FunctionComponent, {
@@ -111,7 +115,7 @@ export class DomOperate {
   }
 
 
-  setAttribute(el: Element, attrName: string, attrValue: any, oldValue: any = {}) {
+  setAttribute(el: Element | Component, attrName: string, attrValue: any, oldValue: any = {}) {
     if (el instanceof HTMLInputElement && el.type === 'checkbox' && attrName === 'checked') {
       el['checked'] = attrValue;
       return;
@@ -120,7 +124,7 @@ export class DomOperate {
       el['value'] = attrValue;
       return;
     }
-    if (attrName === 'dangerouslySetInnerHTML') {
+    if (el instanceof HTMLElement && attrName === 'dangerouslySetInnerHTML') {
       el.innerHTML = attrValue;
       return;
     }
@@ -145,8 +149,14 @@ export class DomOperate {
     if (attrName === 'ref') {
       this.context.refs[attrValue] = el;
     }
-    if (attrValue && attrValue !== 0) {
-      el.setAttribute(attrName, String(attrValue === true ? '' : attrValue));
+    if (el instanceof HTMLElement && attrValue != null) {
+      if (attrValue === true) {
+        el.setAttribute(attrName, '');
+      } else if (attrValue === false) {
+        el.removeAttribute(attrName);
+      } else {
+        el.setAttribute(attrName, String(attrValue));
+      }
     }
   }
 
