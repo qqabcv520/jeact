@@ -266,8 +266,8 @@ export class PictureSelectorComponent extends Component {
 
   private sizeCheck(value: ImageInfo) {
     return (this.bgxMaxImageSize != null ? value.height <= this.bgxMaxImageSize && value.width <= this.bgxMaxImageSize : true)
-      && (this.bgxMinImageSize != null ? value.height >= this.bgxMaxImageSize && value.width >= this.bgxMaxImageSize : true)
-      && (this.bgxMustSquare != null ? value.height === value.width : true);
+      && (this.bgxMinImageSize != null ? value.height >= this.bgxMinImageSize && value.width >= this.bgxMinImageSize : true)
+      && (this.bgxMustSquare ? value.height === value.width : true);
   }
 }
 
