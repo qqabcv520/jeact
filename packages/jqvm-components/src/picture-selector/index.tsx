@@ -265,9 +265,19 @@ export class PictureSelectorComponent extends Component {
   }
 
   private sizeCheck(value: ImageInfo) {
-    return (this.bgxMaxImageSize != null ? value.height <= this.bgxMaxImageSize && value.width <= this.bgxMaxImageSize : true)
-      && (this.bgxMinImageSize != null ? value.height >= this.bgxMinImageSize && value.width >= this.bgxMinImageSize : true)
-      && (this.bgxMustSquare ? value.height === value.width : true);
+    if (this.bgxMaxImageSize != null && value.height > this.bgxMaxImageSize && value.width > this.bgxMaxImageSize) {
+      alert(`请选择长宽小于 ${this.bgxMaxImageSize} 的图片`);
+      return false;
+    }
+    if (this.bgxMinImageSize != null && value.height < this.bgxMinImageSize && value.width < this.bgxMinImageSize) {
+      alert(`请选择长宽大于 ${this.bgxMinImageSize} 的图片`);
+      return false;
+    }
+    if (this.bgxMustSquare && value.height !== value.width) {
+      alert(`请选择长度宽度相等的图片`);
+      return false;
+    }
+    return true;
   }
 }
 
