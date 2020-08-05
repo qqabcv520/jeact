@@ -21,7 +21,7 @@ yarn add jeact
 ```
 或者直接引入
 ```html
-<script src="https://qqabcv520.github.io/jeact/js/jeact.umd.js"></script>
+<script src="https://qqabcv520.github.io/jeact/js/jeact.iife.js"></script>
 ```
 
 

@@ -9,7 +9,7 @@
   "dependencies": {
     "classname": "^0.0.0",
     "sortablejs": "^1.10.2",
-    "jq-mvvm": "~0.1.1",
+    "jeact": "~0.2.0",
     "jquery": "^3.5.0"
   },
   "devDependencies": {

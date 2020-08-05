@@ -1,5 +1,5 @@
 import './index.less';
-import { Component, Type, VNode, isVNode, createVNode, ComponentProps } from 'jq-mvvm';
+import { Component, Type, VNode, isVNode, createVNode, ComponentProps } from 'jeact';
 
 export interface ModalComponentProps<T extends Component> extends ComponentProps {
   content: Type<T>;

@@ -26,7 +26,7 @@ const versionIncrements = [
   'prerelease'
 ]
 
-const corePkgName = 'jq-mvvm'
+const corePkgName = 'jeact'
 const pkgName = '@jqvm'
 
 const inc = i => semver.inc(currentVersion, i, preId)

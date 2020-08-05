@@ -29,9 +29,9 @@
 
 </body>
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
-<script src="./js/jq-mvvm.umd.js"></script>
+<script src="./js/jeact.iife.js"></script>
 <script>
-  const el = createVNode;
+  const el = Jeact.createVNode;
 
   // ------------------functional 组件------------------
   function Counter({count}) {
@@ -43,7 +43,7 @@
   }
 
   // ------------------class 组件------------------
-  class TestComponent extends Component {
+  class TestComponent extends Jeact.Component {
     constructor (props) {
       super(props);
       this.count = 0;
@@ -64,7 +64,7 @@
   }
 
   //------------------表单组件------------------
-  class SwitchComponent extends ValueComponent {
+  class SwitchComponent extends Jeact.ValueComponent {
 
     constructor (props) {
       super(props);
@@ -115,11 +115,11 @@
   }
 
   //------------------挂载到页面------------------
-  Component.create(TestComponent, {}, '#el')
+  Jeact.Component.create(TestComponent, {}, '#el')
 
 
   //------------------绑定到jquery------------------
-  mountComponent({
+  Jeact.mountComponent({
     name: 'customSwitch',
     componentType: SwitchComponent,
   })

@@ -1,5 +1,5 @@
 import './index.less';
-import { ValueComponentProps, ValueComponent, VNode, mountComponent, createVNode } from 'jq-mvvm';
+import { ValueComponentProps, ValueComponent, VNode, mountComponent, createVNode } from 'jeact';
 
 export interface PmSelectorOption {
   value: any;

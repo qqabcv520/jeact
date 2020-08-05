@@ -1,0 +1,24 @@
+{
+  "name": "jeact",
+  "version": "0.2.0",
+  "description": "jeact-类react嵌入式UI库",
+  "main": "index.js",
+  "module": "src/index.ts",
+  "author": "fanzicai",
+  "license": "MIT",
+  "homepage": "https://github.com/qqabcv520/jeact",
+  "bugs": "https://github.com/qqabcv520/jeact/issues",
+  "repository": {
+    "url": "https://github.com/qqabcv520/jeact",
+    "type": "git"
+  },
+  "files": [
+    "index.js",
+    "src/**/*.d.ts",
+    "dist",
+    "README.MD"
+  ],
+  "peerDependencies": {
+    "jquery": "^3.5.1"
+  }
+}
