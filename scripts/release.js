@@ -27,7 +27,7 @@ const versionIncrements = [
 ]
 
 const corePkgName = 'jeact'
-const pkgName = '@jqvm'
+const pkgName = '@jeact'
 
 const inc = i => semver.inc(currentVersion, i, preId)
 const bin = name => path.resolve(__dirname, '../node_modules/.bin/' + name)

@@ -27,7 +27,7 @@
         ],
         "rootDir": ".",
         "paths": {
-            "@jqvm/*": ["packages/*"],
+            "@jeact/*": ["packages/*"],
             "jeact": ["packages/jeact"]
         }
     }
