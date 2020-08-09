@@ -172,11 +172,6 @@ async function publishPackage(pkgName, version, runIfNotDry) {
     return
   }
 
-  // for now (alpha/beta phase), every package except "vue" can be published as
-  // `latest`, whereas "vue" will be published under the "next" tag.
-  const releaseTag = pkgName === 'vue' ? 'next' : null
-
-
   step(`Publishing ${pkgName}...`)
   try {
     await runIfNotDry(
@@ -185,7 +180,6 @@ async function publishPackage(pkgName, version, runIfNotDry) {
         'publish',
         '--new-version',
         version,
-        ...(releaseTag ? ['--tag', releaseTag] : []),
         '--access',
         'public'
       ],
