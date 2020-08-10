@@ -115,7 +115,11 @@ export class PictureSelectorComponent extends Component {
 
   async loadByCode() {
     if (this.bgxLoadImageByCode && this.bgxCode) {
-      this.imageList = await this.bgxLoadImageByCode(this.bgxCode);
+      try {
+        this.imageList = await this.bgxLoadImageByCode(this.bgxCode);
+      } catch (e) {
+        this.imageList = [];
+      }
       this.update();
       this.poaList = this.loadPoaList();
       this.platformList = this.loadPlatformList();
@@ -179,6 +183,7 @@ export class PictureSelectorComponent extends Component {
   }
 
   async codeChange(value: any) {
+    console.log(value);
     this.bgxCode = value;
     this.loadByCode();
   }
@@ -238,7 +243,8 @@ export class PictureSelectorComponent extends Component {
         <div class='bgx-pic-selector-content'>
           <div class='bgx-pic-toolbar'>
             <input class='form-control bgx-pic-toolbar-input' placeholder='搜索SKU/POA' value={this.bgxCode}
-                   onChange={e => this.codeChange(e.target.value)}/>
+                   onChange={e => this.codeChange(e.target.value)}
+                   onkeydown={e => e.key === 'Enter' && this.codeChange(e.target.value)}/>
             <select class='form-control bgx-pic-toolbar-input' value={this.poaFilter} placeholder='过滤POA图片'
                     onchange={this.poaFilterChange()}>
               <option value=''>所有POA</option>
