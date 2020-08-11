@@ -30,11 +30,6 @@ export class PictureSelectorComponent extends Component {
   bgxMinImageSize: number;
   bgxMustSquare: boolean;
 
-  set bgxInitImg(value: string[]) {
-    this.getImageInfos(value.map(value1 => ({url: value1}))).then(res => {
-      this.selectedImg = res;
-    });
-  }
   bgxLoadImageByCode: (code) => Promise<ImageInfo[]>;
   bgxOnOk: (imageList: string[]) => void;
 
