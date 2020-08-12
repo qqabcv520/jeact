@@ -3,6 +3,9 @@
 
 在JQuery环境下用MVVM开发复杂组件，仅几kb超小体积。
 
+定义一个switch组件，挂载到jquery后，`$('#el').switch()`就可以将#el变成一个开关组件，并且`$('#el').val()`就能获取值(js也能取)，放进form也能直接提交，专门解决老旧jquery项目维护难的问题。
+
+
 ## 支持环境
 
 | Edge | Firefox | Chrome |
