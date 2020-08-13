@@ -1,6 +1,6 @@
 {
   "rulesDirectory": [
-    "codelyzer"
+    "node_modules/codelyzer"
   ],
   "linterOptions": {
     "exclude": ["src/app/api/**"]
