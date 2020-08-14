@@ -1,4 +1,4 @@
-import { isVComponent, isVDom, isVElement, isVFunction, isVText, VElement, VNode } from './v-node';
+import { isVComponent, isVDom, isVFunction, isVText, VElement, VNode } from './v-node';
 import { isEmpty } from './utils';
 import { DomOperate } from './dom';
 
@@ -35,17 +35,22 @@ export class Differentiator {
    * @param b
    */
   sameVNode(a: VNode, b: VNode) {
+    if (a.key !== b.key) {
+      return false;
+    }
     if (isVDom(a) && isVDom(b)) {
       return (
-        a.key === b.key &&
         a.type === b.type &&
         this.sameInputType(a, b) //  当标签是<input>的时候，type必须相同
       );
     }
-    if (isVElement(a) && isVElement(b) && a.type === b.type) {
+    if (isVComponent(a) && isVComponent(b) && a.type === b.type) {
       return true;
     }
-    return !!(isVText(a) && isVText(b));
+    if (isVFunction(a) && isVFunction(b)) {
+      return true;
+    }
+    return isVText(a) && isVText(b);
   }
 
   /**
