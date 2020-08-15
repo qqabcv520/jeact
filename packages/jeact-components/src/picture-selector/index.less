@@ -115,6 +115,9 @@
         bottom: 0;
         background-color: rgba(0, 0, 0, 0.5);
         opacity: 0;
+        &:hover {
+          opacity: 1;
+        }
       }
       &-icon {
         color: #fff;
@@ -122,6 +125,14 @@
         position: absolute;
         right: 1px;
         top: 0;
+      }
+      &-preview {
+        color: #fff;
+        font-size: 18px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
       }
       &:hover {
         .bgx-pic-images-option-wrapper {
@@ -182,4 +193,31 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
   }
+}
+
+.preview() {
+  position: absolute;
+  top: 400px;
+  font-size: 25px;
+  cursor: pointer;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.2);
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  user-select: none;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.preview-left {
+  left: 5px;
+  .preview();
+}
+
+.preview-right {
+  right: 5px;
+  .preview();
 }

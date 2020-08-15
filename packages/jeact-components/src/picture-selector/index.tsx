@@ -160,25 +160,44 @@ export class PictureSelectorComponent extends Component {
     this.update();
   }
 
-  preview(item: ImageInfo) {
-    Component.create<ModalComponent>(ModalComponent, {
+  preview(item: ImageInfo, imageList: ImageInfo[]) {
+    let currItem = item;
+
+    const modal = Component.create<ModalComponent>(ModalComponent, {
       title: '预览图片',
       content: () => {
         return (
-          <div style='background: #fff; min-height: 600px;'>
-            <img src={item.url} alt='' style='width: 100%'/>
+          <div style='background: #fff; min-height: 600px; position: relative'>
+            <img src={currItem.url} alt='' style='width: 100%'/>
+            <div class='preview-left' onclick={() => lastImg()}>
+              <i class='fa fa-arrow-left'/>
+            </div>
+            <div class='preview-right' onclick={() => nextImg()}>
+              <i class='fa fa-arrow-right'/>
+            </div>
           </div>
         );
       },
       maskCloseable: true,
-      style: 'width: 1000px;',
+      style: 'width: 900px;',
       buttons: null,
     }, document.body);
     this.update();
+
+    const nextImg = () => {
+      const index = imageList.findIndex(value => value === currItem);
+      currItem = imageList[(index + 1) % imageList.length];
+      modal.update();
+    };
+    const lastImg = () => {
+      const index = imageList.findIndex(value => value === currItem);
+      const newIndex = (index - 1) < 0 ? index + imageList.length : (index - 1);
+      currItem = imageList[newIndex];
+      modal.update();
+    };
   }
 
   async codeChange(value: any) {
-    console.log(value);
     this.bgxCode = value;
     this.loadByCode();
   }
@@ -201,26 +220,30 @@ export class PictureSelectorComponent extends Component {
 
   render() {
 
-    const SelectedImg = ({item}: {item: ImageInfo}) => {
+    const SelectedImg = ({item, imageList}: {item: ImageInfo, imageList: ImageInfo[]}) => {
       return (
         <div class='bgx-pic-selected-option-wrapper' >
           <img src={item.url} class='bgx-pic-selected-img'/>
           <div class='bgx-pic-selected-operation'>
             <i class='fa fa-times-circle bgx-pic-selected-close' onclick={() => this.removeImg(item)} title='取消选择' />
-            <i class='fa fa-search-plus bgx-pic-selected-icon' onclick={() => this.preview(item)} title='查看大图' />
+            <i class='fa fa-search-plus bgx-pic-selected-icon' onclick={() => this.preview(item, imageList)} title='查看大图' />
           </div>
         </div>
       );
     };
 
-    const DisplayImg = ({item}: {item: ImageInfo}) => {
+    const DisplayImg = ({item, imageList}: {item: ImageInfo, imageList: ImageInfo[]}) => {
       return (
         <div onclick={() => this.clickImg(item)}
              class={classname(['bgx-pic-images-option', {'bgx-pic-images-option-selected': this.isSelected(item)}])}>
           <div class='bgx-pic-images-option-wrapper'>
             <img src={item.url} class='bgx-pic-images-option-img'/>
             <div class='bgx-pic-images-option-mask' >
-              <i class={'fa fa-check-circle-o bgx-pic-images-option-icon'} />
+              { this.isSelected(item) && <i class={'fa fa-check-circle-o bgx-pic-images-option-icon'} />}
+              <i class='fa fa-search-plus bgx-pic-images-option-preview' onclick={(e) => {
+                this.preview(item, imageList);
+                e.stopPropagation();
+              } } title='查看大图' />
             </div>
           </div>
           <div>
@@ -233,7 +256,7 @@ export class PictureSelectorComponent extends Component {
     return (
       <div class='bgx-picture-selector'>
         <div class='bgx-pic-selected-images' ref='sortWrapper'>
-          { this.selectedImg.map(item => <SelectedImg item={item}/>) }
+          { this.selectedImg.map(item => <SelectedImg item={item} imageList={this.selectedImg}/>) }
         </div>
         <div class='bgx-pic-selector-content'>
           <div class='bgx-pic-toolbar'>
@@ -258,7 +281,7 @@ export class PictureSelectorComponent extends Component {
             <button class='btn btn-default toolbar-select-all' onclick={this.selectAll}>全选</button>
           </div>
           <div class='bgx-pic-images'>
-            { this.displayImage.map(item => <DisplayImg item={item}/>) }
+            { this.displayImage.map(item => <DisplayImg item={item}  imageList={this.displayImage}/>) }
           </div>
         </div>
       </div>

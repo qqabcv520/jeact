@@ -13,7 +13,7 @@ export class ModalComponent<T extends Component = any> extends Component {
   contentProps: Partial<T>;
 
   maskCloseable: boolean;
-  title: VNode | string = '标题';
+  title: VNode | string;
 
   buttons: VNode | VNode[];
   onCancel: (instance: T) => void;
@@ -63,7 +63,7 @@ export class ModalComponent<T extends Component = any> extends Component {
       if (typeof this.title  === 'string') {
         return  (
           <div class='bgx-modal-title'>
-            <span class='bgx-modal-title-text'>{this.title}</span>
+            <span class='bgx-modal-title-text'>{this.title || '未命名'}</span>
             <i class='fa fa-times bgx-modal-close' onclick={this.closeClick}/>
           </div>
         );
