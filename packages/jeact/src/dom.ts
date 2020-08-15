@@ -95,7 +95,7 @@ export class DomOperate {
       Object.keys(newVNode.attributes).forEach(key => {
         const value = newVNode.attributes[key];
         const oldValue = oldVNode.attributes[key];
-        if (value === oldValue) {
+        if (!(value instanceof Object) && value === oldValue) { // 避免引用类型被修改后不更新
           return;
         } else if (value && value !== 0) {
           this.setAttribute(el, key, value, oldValue);
