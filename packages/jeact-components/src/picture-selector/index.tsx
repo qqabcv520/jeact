@@ -147,7 +147,7 @@ export class PictureSelectorComponent extends Component {
 
   selectImg(item: ImageInfo) {
     if (this.selectedImg.length >= this.bgxMaxImageNum) {
-      // this.msg.info(`最多选择${this.bgxMaxImageNum}张图片！`);
+      alert(`最多选择${this.bgxMaxImageNum}张图片！`);
       return;
     }
     this.selectedImg = [...this.selectedImg, item];
