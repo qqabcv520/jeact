@@ -25,6 +25,7 @@ export class PictureSelectorComponent extends Component {
 
 
   bgxCode: string;
+  bgxSubCode: string;
   bgxMaxImageNum: number;
   bgxMaxImageSize: number;
   bgxMinImageSize: number;
@@ -117,6 +118,10 @@ export class PictureSelectorComponent extends Component {
       }
       this.update();
       this.poaList = this.loadPoaList();
+      if (this.bgxSubCode && this.poaList.some(value => value.code === this.bgxSubCode)) {
+        this.poaFilter = this.bgxSubCode;
+        this.bgxSubCode = null;
+      }
       this.platformList = this.loadPlatformList();
       this.imageList = await this.getImageInfos(this.imageList);
       this.update();
@@ -266,7 +271,9 @@ export class PictureSelectorComponent extends Component {
             <select class='form-control bgx-pic-toolbar-input' value={this.poaFilter} placeholder='过滤POA图片'
                     onchange={this.poaFilterChange()}>
               <option value=''>所有POA</option>
-              {this.poaList.map(value => <option value={value.code}>{value.label || value.code}</option>)}
+              {this.poaList.map(value => {
+                return <option value={value.code} selected={this.poaFilter === value.code}>{value.label || value.code}</option>;
+              })}
             </select>
             {/*<select class='form-control bgx-pic-toolbar-input' ngModel='poaFilter' placeholder='图片类型'*/}
             {/*        ngModelChange='loadImage($event)'>*/}
