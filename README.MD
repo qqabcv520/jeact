@@ -173,3 +173,9 @@ $('#switchInput').on('change', function() { // 监听事件
   console.log($(this).val());
 })
 ```
+
+## License
+
+[MIT](http://opensource.org/licenses/MIT)
+
+Copyright (c) 2018-present, Fanzica
