@@ -8,9 +8,10 @@
     "build": "node scripts/build.js",
     "dev": "node scripts/dev.js",
     "release": "node scripts/release.js",
-    "lint": "npm run lint:ts && npm run lint:style",
-    "lint:ts": "tslint \"packages/*/src/**/*.ts\" -c tslint.json -e \"packages/*/src/**/*.d.ts\" --fix",
-    "lint:style": "stylelint \"packages/*/src/**/*.less\" --syntax less --fix",
+    "lint": "yarn run lint:ts && yarn run lint:style",
+    "lint:fix": "yarn run lint:ts --fix && yarn run lint:style --fix",
+    "lint:ts": "tslint \"packages/*/src/**/*.ts\" -c tslint.json -e \"packages/*/src/**/*.d.ts\"",
+    "lint:style": "stylelint \"packages/*/src/**/*.less\" --syntax less",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "author": "fanzicai",
