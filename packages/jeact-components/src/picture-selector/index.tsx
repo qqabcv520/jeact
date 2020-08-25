@@ -34,6 +34,12 @@ export class PictureSelectorComponent extends Component {
   bgxLoadImageByCode: (code) => Promise<ImageInfo[]>;
   bgxOnOk: (imageList: string[]) => void;
 
+  set bgxInitImg(value: string[]) {
+    this.getImageInfos(value.map(value1 => ({url: value1}))).then(res => {
+      this.selectedImg = res;
+    });
+  }
+
   get displayImage() {
     return this.imageList
       .filter(value => (!this.poaFilter || value.propertyCode === this.poaFilter)
