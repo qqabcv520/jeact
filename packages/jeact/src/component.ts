@@ -33,9 +33,13 @@ export abstract class Component {
     }
   }
 
-  static create<T extends Component>(componentType: Type<T>, props: Partial<T>, el?: HTMLElement | string): T {
+  static create<T extends Component>(
+    componentType: Type<T>,
+    props: Partial<T>,
+    el?: HTMLElement | string,
+  ): T {
     const dom = typeof el === 'string' ? document.querySelector(el) : el;
-    const component = new componentType({...props});
+    const component = new componentType({ ...props });
     component.el = dom as HTMLElement;
     component.beforeMount();
     component.mount();
@@ -93,31 +97,22 @@ export abstract class Component {
     return newVNode;
   }
 
-  beforeMount() {
-  }
+  beforeMount() {}
 
-  mounted() {
-  }
+  mounted() {}
 
-  beforeUpdate() {
-  }
+  beforeUpdate() {}
 
-  updated() {
-  }
+  updated() {}
 
-  destroy() {
-  }
+  destroy() {}
 
   render(): VNode | null {
     return null;
   }
-
 }
 
-
 export abstract class ValueComponent<T> extends Component {
-
-
   readonly el: HTMLInputElement;
   protected valueChange: (options: T) => void;
 
@@ -148,7 +143,6 @@ export abstract class ValueComponent<T> extends Component {
       this.el.dispatchEvent(new InputEvent('input'));
       this.el.dispatchEvent(new UIEvent('change'));
     }
-
   }
 
   appendToEl(node: HTMLElement) {
@@ -158,12 +152,9 @@ export abstract class ValueComponent<T> extends Component {
       this.el.hidden = true;
     }
   }
-
 }
 
-
 export class FunctionComponent<T> extends Component {
-
   functionProps: T;
   renderFunction: (T) => VNode;
 
@@ -171,5 +162,3 @@ export class FunctionComponent<T> extends Component {
     return this.renderFunction(this.functionProps);
   }
 }
-
-

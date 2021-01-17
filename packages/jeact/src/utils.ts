@@ -10,7 +10,8 @@ export function getKebabCase(str: string): string {
   const reg = /^([A-Z$]+)/g;
   const reg2 = /_([a-zA-Z$]+)/g;
   const reg3 = /([A-Z$]+)/g;
-  return str.replace(reg, ($, $1) => $1.toLowerCase())
+  return str
+    .replace(reg, ($, $1) => $1.toLowerCase())
     .replace(reg2, ($, $1) => '-' + $1.toLowerCase())
     .replace(reg3, ($, $1) => '-' + $1.toLowerCase());
 }
@@ -23,12 +24,16 @@ export interface MountComponentArgs {
 }
 
 // 挂载为jquery插件
-export function mountComponent ({name, componentType, props, $ = window['jQuery']}: MountComponentArgs) {
+export function mountComponent({
+  name,
+  componentType,
+  props,
+  $ = window['jQuery'],
+}: MountComponentArgs) {
   if ($ == null) {
     return;
   }
   $.fn[name] = function (...args: any[]) {
-
     if (typeof args[0] === 'string') {
       const [propName, ...methodArgs] = args;
       const component = this.data(name);
@@ -38,7 +43,7 @@ export function mountComponent ({name, componentType, props, $ = window['jQuery'
       if (typeof component[propName] === 'function') {
         component[propName](...methodArgs);
       } else if (methodArgs != null && methodArgs.length === 1) {
-        return component[propName] = methodArgs[0];
+        return (component[propName] = methodArgs[0]);
       } else {
         return component[propName];
       }
@@ -62,8 +67,4 @@ export function mountComponent ({name, componentType, props, $ = window['jQuery'
       $selected[name](propsValue);
     });
   });
-
 }
-
-
-

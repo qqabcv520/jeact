@@ -1,9 +1,17 @@
-import { isVComponent, isVDom, isVElement, isVFunction, isVText, VDom, VNode, VText } from './v-node';
+import {
+  isVComponent,
+  isVDom,
+  isVElement,
+  isVFunction,
+  isVText,
+  VDom,
+  VNode,
+  VText,
+} from './v-node';
 import { Component, FunctionComponent } from './component';
 
 export class DomOperate {
-
-  constructor(private context: Component) { }
+  constructor(private context: Component) {}
 
   createElement(vNode: VText, rootUpdate: () => void): Text;
   createElement(vNode: VDom, rootUpdate: () => void): HTMLElement;
@@ -17,7 +25,7 @@ export class DomOperate {
         rootUpdate,
       });
       vNode.el = vNode.component.vNode?.el;
-      Object.keys(vNode.attributes).forEach(key => {
+      Object.keys(vNode.attributes).forEach((key) => {
         const value = vNode.attributes[key];
         this.setAttribute(vNode.component, key, value);
       });
@@ -37,16 +45,16 @@ export class DomOperate {
     } else if (isVDom(vNode)) {
       const el: HTMLElement = document.createElement(vNode.type);
       vNode.el = el;
-      Object.keys(vNode.handles).forEach(key => {
+      Object.keys(vNode.handles).forEach((key) => {
         const value = vNode.handles[key];
         const handleName = key.toLowerCase().replace(/^on/, '');
         el.addEventListener(handleName, value);
       });
-      Object.keys(vNode.attributes).forEach(key => {
+      Object.keys(vNode.attributes).forEach((key) => {
         const value = vNode.attributes[key];
         this.setAttribute(el, key, value);
       });
-      vNode.children?.forEach(value => {
+      vNode.children?.forEach((value) => {
         const node = this.createElement(value, rootUpdate);
         if (node) {
           el.appendChild(node);
@@ -67,14 +75,14 @@ export class DomOperate {
    */
   updateVDom(el: Node, newVNode: VDom, oldVNode: VDom) {
     if (isVDom(newVNode) && isVDom(oldVNode) && el instanceof HTMLElement) {
-      Object.keys(oldVNode.handles).forEach(key => {
+      Object.keys(oldVNode.handles).forEach((key) => {
         if (!newVNode.handles.hasOwnProperty(key)) {
           const value = oldVNode.handles[key];
           const handleName = key.toLowerCase().replace(/^on/, '');
           el.removeEventListener(handleName, value);
         }
       });
-      Object.keys(newVNode.handles).forEach(key => {
+      Object.keys(newVNode.handles).forEach((key) => {
         const handleName = key.toLowerCase().replace(/^on/, '');
         const value = newVNode.handles[key];
         const oldValue = oldVNode.handles[key];
@@ -86,16 +94,17 @@ export class DomOperate {
         }
         el.addEventListener(handleName, value);
       });
-      Object.keys(oldVNode.attributes).forEach(key => {
+      Object.keys(oldVNode.attributes).forEach((key) => {
         if (!newVNode.attributes.hasOwnProperty(key)) {
           this.removeAttribute(el, key, oldVNode.attributes[key]);
         }
       });
 
-      Object.keys(newVNode.attributes).forEach(key => {
+      Object.keys(newVNode.attributes).forEach((key) => {
         const value = newVNode.attributes[key];
         const oldValue = oldVNode.attributes[key];
-        if (!(value instanceof Object) && value === oldValue) { // 避免引用类型被修改后不更新
+        if (!(value instanceof Object) && value === oldValue) {
+          // 避免引用类型被修改后不更新
           return;
         } else if (value && value !== 0) {
           this.setAttribute(el, key, value, oldValue);
@@ -114,7 +123,6 @@ export class DomOperate {
     }
   }
 
-
   setAttribute(el: Element | Component, attrName: string, attrValue: any, oldValue: any = {}) {
     if (el instanceof HTMLInputElement && el.type === 'checkbox' && attrName === 'checked') {
       el['checked'] = attrValue;
@@ -129,12 +137,12 @@ export class DomOperate {
       return;
     }
     if (typeof attrValue !== 'string' && el instanceof HTMLElement && attrName === 'style') {
-      Object.keys(oldValue).forEach(key => {
+      Object.keys(oldValue).forEach((key) => {
         if (!attrValue.hasOwnProperty(key)) {
           el.style[key] = '';
         }
       });
-      Object.keys(attrValue).forEach(key => {
+      Object.keys(attrValue).forEach((key) => {
         const value = attrValue[key];
         if (value === oldValue[key]) {
           return;
@@ -174,7 +182,7 @@ export class DomOperate {
       return;
     }
     if (el instanceof HTMLElement && attrName === 'style') {
-      Object.keys(oldValue).forEach(key => {
+      Object.keys(oldValue).forEach((key) => {
         el.style[key] = '';
       });
       return;
@@ -210,7 +218,6 @@ export class DomOperate {
     return node.nextSibling;
   }
 
-
   removeVNode(vNode: VNode) {
     if (isVComponent(vNode) || isVFunction(vNode)) {
       this.callDestroy(vNode);
@@ -235,5 +242,4 @@ export class DomOperate {
       }
     }
   }
-
 }
