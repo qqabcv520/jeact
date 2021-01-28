@@ -1,11 +1,12 @@
 import './index.less';
-import { Component, Type, VNode, isVNode, createVNode, ComponentProps } from 'jeact';
+import type { Type, VNode, ComponentProps } from 'jeact';
+import { Component, isVNode, createVNode } from 'jeact';
 
-export interface ModalComponentProps<T extends Component> extends ComponentProps {
+export type ModalComponentProps<T extends Component> = {
   content: Type<T>;
   width: string;
   contentProps: any;
-}
+} & ComponentProps
 
 export class ModalComponent<T extends Component = any> extends Component {
   content: Type<T> | (() => VNode);
@@ -65,7 +66,7 @@ export class ModalComponent<T extends Component = any> extends Component {
             <i class="fa fa-times bgx-modal-close" onclick={this.closeClick} />
           </div>
         );
-      } else if (isVNode(this.title)) {
+      } if (isVNode(this.title)) {
         return this.title;
       }
     };
@@ -110,8 +111,8 @@ export function mountModal<T extends Component>(args: MountModalArgs<T>) {
   };
 }
 
-export interface MountModalArgs<T extends Component> extends Partial<ModalComponent<T>> {
+export type MountModalArgs<T extends Component> = {
   name: string;
   title: string;
   $?: JQueryStatic;
-}
+} & Partial<ModalComponent<T>>

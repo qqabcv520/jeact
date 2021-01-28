@@ -1,6 +1,7 @@
-import { ValueComponent, ValueComponentProps, createVNode, mountComponent, VNode } from 'jeact';
+import type { ValueComponentProps, VNode } from 'jeact';
+import { ValueComponent, createVNode, mountComponent } from 'jeact';
 
-export interface CascaderOption {
+export type CascaderOption = {
   value: any;
   label: string;
   checked?: boolean;
@@ -8,7 +9,7 @@ export interface CascaderOption {
   children?: CascaderOption[];
 }
 
-export interface CascaderComponentProps extends ValueComponentProps<any[]> {
+export type CascaderComponentProps = {
   placeholder?: string;
   options?: any[];
   valueField?: string;
@@ -16,7 +17,7 @@ export interface CascaderComponentProps extends ValueComponentProps<any[]> {
   childrenField?: string;
   cacheName?: string;
   value?: any[];
-}
+} & ValueComponentProps<any[]>
 
 export class CascaderComponent extends ValueComponent<any[]> {
   placeholder: string;
@@ -105,7 +106,10 @@ export class CascaderComponent extends ValueComponent<any[]> {
   writeValue(value: string) {
     this.value = value ? value.split(',') : [];
     if (this.convertedOptions != null) {
-      this.leafOptions.forEach((value1) => (value1.checked = this.value.includes(value1.value)));
+      this.leafOptions.forEach((value1) => {
+        const localValue = value1;
+        localValue.checked = this.value.includes(value1.value);
+      });
       this.update();
     }
   }
@@ -172,7 +176,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   };
 
   searchInput = (e: InputEvent) => {
-    this.searchText = e.target['value'];
+    this.searchText = (e.target as HTMLInputElement).value;
     this.update();
   };
 
@@ -242,7 +246,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   }
 
   searchCheckAll = (e: InputEvent) => {
-    const checked = e.target['checked'];
+    const checked = (e.target as HTMLInputElement).checked;
     this.searchOptions.forEach((value) => this.checkOption(value.originOption, checked));
     this.update();
   };
@@ -280,7 +284,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   };
 
   commonCheckAll = (e: InputEvent) => {
-    const checked = e.target['checked'];
+    const checked = (e.target as HTMLInputElement).checked;
     this.commonOptions.forEach((value) => this.checkOption(value, checked));
     this.update();
   };
@@ -324,7 +328,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
   }
 
   optionChange(e: InputEvent, option: CascaderOption) {
-    const checked = e.target['checked'];
+    const checked = (e.target as HTMLInputElement).checked;
     this.checkOption(option, checked);
     this.update();
   }
@@ -394,7 +398,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
     if (this.open) {
       popup = (
         <div class="bgx-popup" ref="popup">
-          {/*搜索栏*/}
+          {/* 搜索栏 */}
           <div class="bgx-search-bar">
             <div class="bgx-search-input" ref="search">
               <div class="input-group">
@@ -452,7 +456,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
               清空
             </button>
           </div>
-          {/*常用选择*/}
+          {/* 常用选择 */}
           <div class="bgx-commonly-used">
             <div class="bgx-commonly-used-head">
               <label class="bgx-label">
@@ -486,7 +490,7 @@ export class CascaderComponent extends ValueComponent<any[]> {
                 ))}
             </div>
           </div>
-          {/*options*/}
+          {/* options */}
           <div class="bgx-options">
             {this.columns.map(
               (value, level) =>
@@ -516,12 +520,12 @@ export class CascaderComponent extends ValueComponent<any[]> {
                 ),
             )}
           </div>
-          {/*已选择计数*/}
+          {/* 已选择计数 */}
           <div class="bgx-selected-cnt">
             <span class="bgx-selected-label">已选择</span>
             {String(this.checkedOptions.length)}/{this.leafOptions.length}
           </div>
-          {/*已选择option*/}
+          {/* 已选择option */}
           <div class="bgx-selected-tags">
             {this.checkedOptions.map((value) => (
               <div class="bgx-selected-tag">

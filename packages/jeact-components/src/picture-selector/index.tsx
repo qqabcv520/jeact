@@ -4,7 +4,7 @@ import Sortable from 'sortablejs';
 import { ModalComponent, mountModal } from '../modal';
 import { Component, createVNode } from 'jeact';
 
-interface ImageInfo {
+type ImageInfo = {
   url: string;
   width?: number;
   height?: number;
@@ -21,7 +21,7 @@ export class PictureSelectorComponent extends Component {
   platformList: { value: string; label: string }[] = [];
   platformFilter: string;
   currentCode: string;
-  selectedImg: { [code: string]: ImageInfo[] } = { [this.currentCode]: [] };
+  selectedImg: Record<string, ImageInfo[]> = { [this.currentCode]: [] };
 
   bgxCode: string;
   bgxSubCode: string;
@@ -31,9 +31,9 @@ export class PictureSelectorComponent extends Component {
   bgxMustSquare: boolean;
 
   bgxLoadImageByCode: (code) => Promise<ImageInfo[]>;
-  bgxOnOk: (imageList: { [code: string]: string[] }) => void;
+  bgxOnOk: (imageList: Record<string, string[]>) => void;
 
-  set bgxInitImg(value: { [code: string]: string[] }) {
+  set bgxInitImg(value: Record<string, string[]>) {
     this.currentCode = Object.keys(value)[0] || '';
     Object.keys(value).forEach((code) => {
       this.getImageInfos(value[code].map((value1) => ({ url: value1 }))).then((res) => {
@@ -68,7 +68,7 @@ export class PictureSelectorComponent extends Component {
     ];
     return platformList.map(function (value) {
       return {
-        value: value,
+        value,
         label: value,
       };
     });
@@ -354,10 +354,10 @@ export class PictureSelectorComponent extends Component {
                 );
               })}
             </select>
-            {/*<select class='form-control bgx-pic-toolbar-input' ngModel='poaFilter' placeholder='图片类型'*/}
-            {/*        ngModelChange='loadImage($event)'>*/}
-            {/*  <option  value={1}>{''}</option>*/}
-            {/*</select>*/}
+            {/* <select class='form-control bgx-pic-toolbar-input' ngModel='poaFilter' placeholder='图片类型' */}
+            {/*        ngModelChange='loadImage($event)'> */}
+            {/*  <option  value={1}>{''}</option> */}
+            {/* </select> */}
             <select
               class="form-control bgx-pic-toolbar-input"
               value={this.poaFilter}
