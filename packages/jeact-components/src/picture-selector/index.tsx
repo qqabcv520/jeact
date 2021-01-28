@@ -20,7 +20,8 @@ export class PictureSelectorComponent extends Component {
   poaFilter: string;
   platformList: { value: string; label: string }[] = [];
   platformFilter: string;
-  selectedImg: ImageInfo[] = [];
+  currentCode: string;
+  selectedImg: { [code: string]: ImageInfo[] } = { [this.currentCode]: [] };
 
   bgxCode: string;
   bgxSubCode: string;
@@ -30,11 +31,14 @@ export class PictureSelectorComponent extends Component {
   bgxMustSquare: boolean;
 
   bgxLoadImageByCode: (code) => Promise<ImageInfo[]>;
-  bgxOnOk: (imageList: string[]) => void;
+  bgxOnOk: (imageList: { [code: string]: string[] }) => void;
 
-  set bgxInitImg(value: string[]) {
-    this.getImageInfos(value.map((value1) => ({ url: value1 }))).then((res) => {
-      this.selectedImg = res;
+  set bgxInitImg(value: { [code: string]: string[] }) {
+    this.currentCode = Object.keys(value)[0] || '';
+    Object.keys(value).forEach((code) => {
+      this.getImageInfos(value[code].map((value1) => ({ url: value1 }))).then((res) => {
+        this.selectedImg[code] = res;
+      });
     });
   }
 
@@ -111,8 +115,8 @@ export class PictureSelectorComponent extends Component {
     new Sortable(wrapper, {
       animation: 150,
       onUpdate: (event) => {
-        const item = this.selectedImg.splice(event.oldIndex, 1)[0];
-        this.selectedImg.splice(event.newIndex, 0, item);
+        const item = this.selectedImg[this.currentCode].splice(event.oldIndex, 1)[0];
+        this.selectedImg[this.currentCode].splice(event.newIndex, 0, item);
         this.update();
       },
     });
@@ -141,18 +145,21 @@ export class PictureSelectorComponent extends Component {
   selectAll = (e) => {
     const num =
       this.bgxMaxImageNum != null
-        ? this.bgxMaxImageNum - this.selectedImg.length
+        ? this.bgxMaxImageNum - this.selectedImg[this.currentCode].length
         : this.selectedImg.length;
     const unselectedImg = this.displayImage.filter(
       (value) => !this.isSelected(value) && this.sizeCheck(value),
     );
-    const newImgs = unselectedImg.slice(0, num);
-    this.selectedImg = this.selectedImg.concat(newImgs);
+    const newImgs = unselectedImg[this.currentCode].slice(0, num);
+    this.selectedImg[this.currentCode] = this.selectedImg[this.currentCode].concat(newImgs);
     this.update();
   };
 
   isSelected = (item: ImageInfo) => {
-    return this.selectedImg && this.selectedImg.some((val) => val.url === (item && item.url));
+    return (
+      this.selectedImg &&
+      this.selectedImg[this.currentCode].some((val) => val.url === (item && item.url))
+    );
   };
 
   private clickImg(item: ImageInfo) {
@@ -165,17 +172,17 @@ export class PictureSelectorComponent extends Component {
   }
 
   selectImg(item: ImageInfo) {
-    if (this.selectedImg.length >= this.bgxMaxImageNum) {
+    if (this.selectedImg[this.currentCode].length >= this.bgxMaxImageNum) {
       alert(`最多选择${this.bgxMaxImageNum}张图片！`);
       return;
     }
-    this.selectedImg = [...this.selectedImg, item];
+    this.selectedImg[this.currentCode] = [...this.selectedImg[this.currentCode], item];
   }
 
   removeImg(item: ImageInfo) {
-    const index = this.selectedImg.findIndex((val) => val.url === item.url);
-    this.selectedImg.splice(index, 1);
-    this.selectedImg = [...this.selectedImg];
+    const index = this.selectedImg[this.currentCode].findIndex((val) => val.url === item.url);
+    this.selectedImg[this.currentCode].splice(index, 1);
+    this.selectedImg[this.currentCode] = [...this.selectedImg[this.currentCode]];
     this.update();
   }
 
@@ -298,9 +305,29 @@ export class PictureSelectorComponent extends Component {
 
     return (
       <div class="bgx-picture-selector">
+        <div class="bgx-pic-tabs">
+          {Object.keys(this.selectedImg)
+            .filter(Boolean)
+            .map((code) => {
+              return (
+                <div
+                  class={classname([
+                    'bgx-pic-tab',
+                    { 'bgx-pic-tab-selected': code === this.currentCode },
+                  ])}
+                  onclick={() => {
+                    this.currentCode = code;
+                    this.update();
+                  }}
+                >
+                  {code}
+                </div>
+              );
+            })}
+        </div>
         <div class="bgx-pic-selected-images" ref="sortWrapper">
-          {this.selectedImg.map((item) => (
-            <SelectedImg item={item} imageList={this.selectedImg} />
+          {this.selectedImg[this.currentCode].map((item) => (
+            <SelectedImg item={item} imageList={this.selectedImg[this.currentCode]} />
           ))}
         </div>
         <div class="bgx-pic-selector-content">
@@ -389,6 +416,11 @@ mountModal({
   content: PictureSelectorComponent,
   style: 'width: 1000px;',
   onOk(instance: PictureSelectorComponent) {
-    instance?.bgxOnOk(instance.selectedImg.map((value) => value.url));
+    instance?.bgxOnOk(
+      Object.keys(instance.selectedImg).reduce((obj, key) => {
+        obj[key] = instance.selectedImg[key].map((value) => value.url);
+        return obj;
+      }, {}),
+    );
   },
 });

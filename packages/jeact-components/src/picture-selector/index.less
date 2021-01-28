@@ -9,6 +9,31 @@
 .bgx-picture-selector {
   width: 1000px;
   background-color: #fff;
+  .bgx-pic-tabs {
+    display: flex;
+    padding: 6px 4px 0 4px;
+    border-bottom: 1px solid #ddd;
+    overflow-x: auto;
+    overflow-y: hidden;
+    .bgx-pic-tab {
+      position: relative;
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      border-bottom-color: transparent;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      margin-left: 2px;
+      margin-right: 2px;
+      margin-bottom: -1px;
+      cursor: pointer;
+      background-color: #eee;
+      .no-select;
+    }
+    .bgx-pic-tab-selected {
+      border-bottom-color: #fff;
+      background-color: #fff;
+    }
+  }
   .bgx-pic-selected {
     &-images {
       height: 160px;
